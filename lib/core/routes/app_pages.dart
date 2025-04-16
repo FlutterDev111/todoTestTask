@@ -6,11 +6,16 @@ import 'package:todotask/features/onboarding/presentation/bindings/onboarding_bi
 import 'package:todotask/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:todotask/features/splash/presentation/bindings/splash_binding.dart';
 import 'package:todotask/features/splash/presentation/pages/splash_page.dart';
+import '../../features/home/presentation/bindings/home_binding.dart';
+import '../../features/home/presentation/pages/home_page.dart';
 
 import '../../features/auth/presentation/controllers/auth_controller.dart';
+import '../../features/auth/presentation/bindings/auth_binding.dart';
 
 class AppPages {
-  static final pages = [
+  static const initial = AppRoutes.login;
+
+  static final routes = [
     GetPage(
       name: AppRoutes.splash,
       page: () => const SplashPage(),
@@ -24,16 +29,17 @@ class AppPages {
     GetPage(
       name: AppRoutes.login,
       page: () => const LoginPage(),
-      binding: BindingsBuilder(() {
-        Get.lazyPut(() => AuthController());
-      }),
+      binding: AuthBinding(),
     ),
     GetPage(
       name: AppRoutes.signup,
       page: () => const SignupPage(),
-      binding: BindingsBuilder(() {
-        Get.lazyPut(() => AuthController());
-      }),
+      binding: AuthBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.home,
+      page: () => const HomePage(),
+      binding: HomeBinding(),
     ),
     // Add more routes here
   ];

@@ -137,26 +137,21 @@ class AuthController extends GetxController {
 
     try {
       isLoading.value = true;
+      // Commenting out authentication for now
+      // await Future.delayed(const Duration(seconds: 2));
+      // final user = UserModel(
+      //   fullName: "Demo User",
+      //   email: emailController.text,
+      //   dateOfBirth: "01/01/1990",
+      //   phoneNumber: "+91 1234567890"
+      // );
+      // await storage.saveUser(user);
+      // await storage.saveIsLoggedIn(true);
+      // if (rememberMe.value) {
+      //   await storage.saveToken("mock_token");
+      // }
+      // currentUser.value = user;
       
-      // Simulating API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      // For demo purposes, we'll create a mock user
-      final user = UserModel(
-        fullName: "Demo User",
-        email: emailController.text,
-        dateOfBirth: "01/01/1990",
-        phoneNumber: "+91 1234567890"
-      );
-
-      // Save user data and login status
-      await storage.saveUser(user);
-      await storage.saveIsLoggedIn(true);
-      if (rememberMe.value) {
-        await storage.saveToken("mock_token"); // In real app, save actual token
-      }
-
-      currentUser.value = user;
       clearControllers();
       Get.offAllNamed(AppRoutes.home);
     } catch (e) {
@@ -175,24 +170,19 @@ class AuthController extends GetxController {
 
     try {
       isLoading.value = true;
-
-      // Create user model from form data
-      final user = UserModel(
-        fullName: fullNameController.text,
-        email: emailController.text,
-        dateOfBirth: dateController.text,
-        phoneNumber: phoneController.text,
-      );
-
-      // Simulating API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      // Save user data and login status
-      await storage.saveUser(user);
-      await storage.saveIsLoggedIn(true);
-      await storage.saveToken("mock_token"); // In real app, save actual token
-
-      currentUser.value = user;
+      // Commenting out authentication for now
+      // final user = UserModel(
+      //   fullName: fullNameController.text,
+      //   email: emailController.text,
+      //   dateOfBirth: dateController.text,
+      //   phoneNumber: phoneController.text,
+      // );
+      // await Future.delayed(const Duration(seconds: 2));
+      // await storage.saveUser(user);
+      // await storage.saveIsLoggedIn(true);
+      // await storage.saveToken("mock_token");
+      // currentUser.value = user;
+      
       clearControllers();
       Get.offAllNamed(AppRoutes.home);
     } catch (e) {

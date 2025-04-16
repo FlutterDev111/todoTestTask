@@ -7,6 +7,17 @@ class HomeController extends GetxController {
 
   void changeTab(int index) {
     selectedIndex.value = index;
+    // Here you can add navigation logic for different tabs
+    switch (index) {
+      case 0: // Home
+        break;
+      case 1: // Notification
+        break;
+      case 2: // Calendar
+        break;
+      case 3: // Profile
+        break;
+    }
   }
 
   void changeCategory(String category) {
@@ -53,6 +64,9 @@ class HomeController extends GetxController {
           ],
         ),
       ),
+      backgroundColor: Colors.transparent,
+      isDismissible: true,
+      enableDrag: true,
     );
   }
 

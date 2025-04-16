@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:todotask/core/di/injection_container.dart';
-import 'package:todotask/core/routes/app_pages.dart';
-import 'package:todotask/core/routes/app_routes.dart';
-import 'package:todotask/core/theme/app_theme.dart';
+import 'core/routes/app_pages.dart';
 import 'core/services/storage_service.dart';
 
 void main() async {
@@ -21,13 +18,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Todo App',
+      title: 'Todo Task',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFE17055)),
+        useMaterial3: true,
+      ),
+      initialRoute: AppPages.initial,
+      getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
-      initialRoute: AppRoutes.splash,
-      getPages: AppPages.pages,
     );
   }
 }
