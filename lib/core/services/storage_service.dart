@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/auth/data/models/user_model.dart';
 
-class StorageService extends GetxService {
-  static StorageService get to => Get.find();
+class StorageService {
   late final SharedPreferences _prefs;
 
   // Keys

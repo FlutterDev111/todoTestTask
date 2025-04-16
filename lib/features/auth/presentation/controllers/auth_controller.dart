@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/services/storage_service.dart';
@@ -7,9 +7,9 @@ import '../../data/models/user_model.dart';
 import '../pages/login_page.dart';
 import '../pages/signup_page.dart';
 
-class AuthController extends GetxController {
+class AuthController extends ChangeNotifier {
   final formKey = GlobalKey<FormState>();
-  final storage = StorageService.to;
+  final StorageService storage;
   
   late TextEditingController emailController;
   late TextEditingController passwordController;
@@ -17,22 +17,25 @@ class AuthController extends GetxController {
   late TextEditingController dateController;
   late TextEditingController phoneController;
 
-  final isPasswordVisible = false.obs;
-  final rememberMe = false.obs;
-  final isLoading = false.obs;
-  final Rx<UserModel?> currentUser = Rx<UserModel?>(null);
+  bool _isPasswordVisible = false;
+  bool _rememberMe = false;
+  bool _isLoading = false;
+  UserModel? _currentUser;
 
-  @override
-  void onInit() {
-    super.onInit();
+  bool get isPasswordVisible => _isPasswordVisible;
+  bool get rememberMe => _rememberMe;
+  bool get isLoading => _isLoading;
+  UserModel? get currentUser => _currentUser;
+
+  AuthController({required this.storage}) {
     initializeControllers();
     checkLoginStatus();
   }
 
   void checkLoginStatus() {
     if (storage.isLoggedIn()) {
-      currentUser.value = storage.getUser();
-      Get.offAllNamed(AppRoutes.home);
+      _currentUser = storage.getUser();
+      notifyListeners();
     }
   }
 
@@ -53,9 +56,9 @@ class AuthController extends GetxController {
   }
 
   @override
-  void onClose() {
+  void dispose() {
     disposeControllers();
-    super.onClose();
+    super.dispose();
   }
 
   void clearControllers() {
@@ -66,33 +69,29 @@ class AuthController extends GetxController {
     phoneController.clear();
   }
 
-  void navigateToSignup() {
-    Get.delete<AuthController>();
-    Get.to(() => const SignupPage(), binding: BindingsBuilder(() {
-      Get.put(AuthController());
-    }));
+  void navigateToSignup(BuildContext context) {
+    Navigator.pushReplacementNamed(context, AppRoutes.signup);
   }
 
-  void navigateToLogin() {
-    Get.delete<AuthController>();
-    Get.to(() => const LoginPage(), binding: BindingsBuilder(() {
-      Get.put(AuthController());
-    }));
+  void navigateToLogin(BuildContext context) {
+    Navigator.pushReplacementNamed(context, AppRoutes.login);
   }
 
   void togglePasswordVisibility() {
-    isPasswordVisible.value = !isPasswordVisible.value;
+    _isPasswordVisible = !_isPasswordVisible;
+    notifyListeners();
   }
 
   void toggleRememberMe() {
-    rememberMe.value = !rememberMe.value;
+    _rememberMe = !_rememberMe;
+    notifyListeners();
   }
 
   String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email is required';
     }
-    if (!GetUtils.isEmail(value)) {
+    if (!value.contains('@') || !value.contains('.')) {
       return 'Please enter a valid email';
     }
     return null;
@@ -126,17 +125,28 @@ class AuthController extends GetxController {
     if (value == null || value.isEmpty) {
       return 'Phone number is required';
     }
-    if (!GetUtils.isPhoneNumber(value)) {
+    // Simple phone number validation
+    if (value.length < 10) {
       return 'Please enter a valid phone number';
     }
     return null;
   }
 
-  Future<void> login() async {
+  void setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  void setCurrentUser(UserModel? user) {
+    _currentUser = user;
+    notifyListeners();
+  }
+
+  Future<void> login(BuildContext context) async {
     if (!formKey.currentState!.validate()) return;
 
     try {
-      isLoading.value = true;
+      setLoading(true);
       // Commenting out authentication for now
       // await Future.delayed(const Duration(seconds: 2));
       // final user = UserModel(
@@ -147,29 +157,31 @@ class AuthController extends GetxController {
       // );
       // await storage.saveUser(user);
       // await storage.saveIsLoggedIn(true);
-      // if (rememberMe.value) {
+      // if (rememberMe) {
       //   await storage.saveToken("mock_token");
       // }
-      // currentUser.value = user;
+      // setCurrentUser(user);
       
       clearControllers();
-      Get.offAllNamed(AppRoutes.home);
+      notifyListeners();
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Login failed. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Login failed. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
-      isLoading.value = false;
+      setLoading(false);
     }
   }
 
-  Future<void> register() async {
+  Future<void> register(BuildContext context) async {
     if (!formKey.currentState!.validate()) return;
 
     try {
-      isLoading.value = true;
+      setLoading(true);
       // Commenting out authentication for now
       // final user = UserModel(
       //   fullName: fullNameController.text,
@@ -181,31 +193,35 @@ class AuthController extends GetxController {
       // await storage.saveUser(user);
       // await storage.saveIsLoggedIn(true);
       // await storage.saveToken("mock_token");
-      // currentUser.value = user;
+      // setCurrentUser(user);
       
       clearControllers();
-      Get.offAllNamed(AppRoutes.home);
+      notifyListeners();
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Registration failed. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Registration failed. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
-      isLoading.value = false;
+      setLoading(false);
     }
   }
 
-  Future<void> logout() async {
+  Future<void> logout(BuildContext context) async {
     try {
       await storage.clearAll();
-      currentUser.value = null;
-      Get.offAllNamed(AppRoutes.login);
+      _currentUser = null;
+      notifyListeners();
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) => false);
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Logout failed. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Logout failed. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }

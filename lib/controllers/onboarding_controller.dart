@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-class OnboardingController extends GetxController {
+class OnboardingController extends ChangeNotifier {
   final pageController = PageController();
-  final currentPage = 0.obs;
+  int _currentPage = 0;
+
+  int get currentPage => _currentPage;
 
   void onPageChanged(int index) {
-    currentPage.value = index;
+    _currentPage = index;
+    notifyListeners();
   }
 
   void nextPage() {
-    if (currentPage.value < 2) {
+    if (_currentPage < 2) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     } else {
       // Navigate to home screen or login screen
-      // Get.off(() => const HomeScreen());
+      // Navigator.pushReplacementNamed(context, '/home');
     }
   }
 
@@ -30,8 +32,8 @@ class OnboardingController extends GetxController {
   }
 
   @override
-  void onClose() {
+  void dispose() {
     pageController.dispose();
-    super.onClose();
+    super.dispose();
   }
 } 

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-class HomeController extends GetxController {
-  final selectedIndex = 0.obs;
-  final selectedCategory = 'To-DO'.obs;
+class HomeController extends ChangeNotifier {
+  int _selectedIndex = 0;
+  String _selectedCategory = 'To-DO';
+
+  int get selectedIndex => _selectedIndex;
+  String get selectedCategory => _selectedCategory;
 
   void changeTab(int index) {
-    selectedIndex.value = index;
+    _selectedIndex = index;
+    notifyListeners();
     // Here you can add navigation logic for different tabs
     switch (index) {
       case 0: // Home
@@ -21,12 +24,17 @@ class HomeController extends GetxController {
   }
 
   void changeCategory(String category) {
-    selectedCategory.value = category;
+    _selectedCategory = category;
+    notifyListeners();
   }
 
-  void showAddOptions() {
-    Get.bottomSheet(
-      Container(
+  void showAddOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isDismissible: true,
+      enableDrag: true,
+      builder: (context) => Container(
         padding: const EdgeInsets.all(20),
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -37,36 +45,33 @@ class HomeController extends GetxController {
           children: [
             _buildOption(
               'Setup Journal',
-              () => Get.back(),
+              () => Navigator.pop(context),
             ),
             const SizedBox(height: 16),
             _buildOption(
               'Setup Habit',
-              () => Get.back(),
+              () => Navigator.pop(context),
             ),
             const SizedBox(height: 16),
             _buildOption(
               'Add List',
-              () => Get.back(),
+              () => Navigator.pop(context),
             ),
             const SizedBox(height: 16),
             _buildOption(
               'Add Note',
-              () => Get.back(),
+              () => Navigator.pop(context),
             ),
             const SizedBox(height: 16),
             _buildOption(
               'Add Todo',
-              () => Get.back(),
-              color: Theme.of(Get.context!).primaryColor,
+              () => Navigator.pop(context),
+              color: Theme.of(context).primaryColor,
               textColor: Colors.white,
             ),
           ],
         ),
       ),
-      backgroundColor: Colors.transparent,
-      isDismissible: true,
-      enableDrag: true,
     );
   }
 

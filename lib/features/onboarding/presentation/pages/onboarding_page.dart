@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:todotask/features/onboarding/presentation/controllers/onboarding_controller.dart';
 import 'package:todotask/features/onboarding/presentation/widgets/onboarding_content.dart';
 
-class OnboardingPage extends GetView<OnboardingController> {
+class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<OnboardingController>();
+    
     return Scaffold(
       body: Stack(
         children: [
@@ -50,19 +53,19 @@ class OnboardingPage extends GetView<OnboardingController> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Obx(() => TextButton(
-                            onPressed: controller.currentPage.value < controller.pages.length - 1
-                                ? controller.skip
-                                : null,
-                            child: Text(
-                              'Skip',
-                              style: TextStyle(
-                                color: controller.currentPage.value < controller.pages.length - 1
-                                    ? Colors.grey
-                                    : Colors.transparent,
-                              ),
-                            ),
-                          )),
+                      TextButton(
+                        onPressed: controller.currentPage < controller.pages.length - 1
+                            ? controller.skip
+                            : null,
+                        child: Text(
+                          'Skip',
+                          style: TextStyle(
+                            color: controller.currentPage < controller.pages.length - 1
+                                ? Colors.grey
+                                : Colors.transparent,
+                          ),
+                        ),
+                      ),
                       Container(
                         width: 60,
                         height: 60,

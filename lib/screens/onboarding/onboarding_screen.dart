@@ -60,13 +60,13 @@ class OnboardingScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Obx(() => TextButton(
-                            onPressed: controller.currentPage.value < 2
+                            onPressed: controller.currentPage < 2
                                 ? controller.skip
                                 : null,
                             child: Text(
                               'Skip',
                               style: TextStyle(
-                                color: controller.currentPage.value < 2
+                                color: controller.currentPage < 2
                                     ? Colors.grey
                                     : Colors.transparent,
                               ),

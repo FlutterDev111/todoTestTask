@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../controllers/home_controller.dart';
 import '../widgets/category_chip.dart';
 import '../widgets/empty_tasks.dart';
 import '../widgets/bottom_nav_bar.dart';
 
-class HomePage extends GetView<HomeController> {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<HomeController>();
+    
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -54,23 +56,23 @@ class HomePage extends GetView<HomeController> {
                   children: [
                     CategoryChip(
                       label: 'To-DO',
-                      isSelected: true,
-                      onTap: () {},
+                      isSelected: controller.selectedCategory == 'To-DO',
+                      onTap: () => controller.changeCategory('To-DO'),
                     ),
                     CategoryChip(
                       label: 'Habit',
-                      isSelected: false,
-                      onTap: () {},
+                      isSelected: controller.selectedCategory == 'Habit',
+                      onTap: () => controller.changeCategory('Habit'),
                     ),
                     CategoryChip(
                       label: 'Journal',
-                      isSelected: false,
-                      onTap: () {},
+                      isSelected: controller.selectedCategory == 'Journal',
+                      onTap: () => controller.changeCategory('Journal'),
                     ),
                     CategoryChip(
                       label: 'Note',
-                      isSelected: false,
-                      onTap: () {},
+                      isSelected: controller.selectedCategory == 'Note',
+                      onTap: () => controller.changeCategory('Note'),
                     ),
                   ],
                 ),
@@ -84,7 +86,7 @@ class HomePage extends GetView<HomeController> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => controller.showAddOptions(),
+        onPressed: () => controller.showAddOptions(context),
         backgroundColor: Theme.of(context).primaryColor,
         child: const Icon(Icons.add, color: Colors.white),
       ),

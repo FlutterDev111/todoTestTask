@@ -1,0 +1,2 @@
+/Users/apple/Desktop/todoTestTask/android/app/.cxx/Debug/1m71b5k6/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Users/apple/Desktop/todoTestTask/android/app/.cxx/Debug/1m71b5k6/armeabi-v7a/CMakeFiles/edit_cache.dir

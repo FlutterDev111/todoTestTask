@@ -1,27 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:todotask/core/routes/app_routes.dart';
-import 'package:todotask/features/auth/presentation/bindings/auth_binding.dart';
 import 'package:todotask/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:todotask/features/auth/presentation/widgets/custom_input_field.dart';
 
-import 'login_page.dart';
-
-class SignupPage extends GetView<AuthController> {
+class SignupPage extends StatelessWidget {
   const SignupPage({super.key});
-
-  static String get route => '/signup';
-
-  static GetPage page() {
-    return GetPage(
-      name: route,
-      page: () => const SignupPage(),
-      binding: AuthBinding(),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<AuthController>();
+    
     return Scaffold(
       backgroundColor: const Color(0xFFFFF5F1),
       body: SafeArea(
@@ -73,7 +62,7 @@ class SignupPage extends GetView<AuthController> {
                         Row(
                           children: [
                             GestureDetector(
-                              onTap: controller.navigateToLogin,
+                              onTap: () => controller.navigateToLogin(context),
                               child: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
@@ -109,7 +98,7 @@ class SignupPage extends GetView<AuthController> {
                               ),
                             ),
                             GestureDetector(
-                              onTap: controller.navigateToLogin,
+                              onTap: () => controller.navigateToLogin(context),
                               child: const Text(
                                 'Login',
                                 style: TextStyle(
@@ -167,59 +156,55 @@ class SignupPage extends GetView<AuthController> {
                           prefixText: '+91 ',
                         ),
                         const SizedBox(height: 24),
-                        Obx(
-                          () => CustomInputField(
-                            label: 'Set Password',
-                            controller: controller.passwordController,
-                            validator: controller.validatePassword,
-                            obscureText: !controller.isPasswordVisible.value,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                controller.isPasswordVisible.value
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                color: Colors.grey,
-                                size: 20,
-                              ),
-                              onPressed: controller.togglePasswordVisibility,
+                        CustomInputField(
+                          label: 'Set Password',
+                          controller: controller.passwordController,
+                          validator: controller.validatePassword,
+                          obscureText: !controller.isPasswordVisible,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              controller.isPasswordVisible
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: Colors.grey,
+                              size: 20,
                             ),
+                            onPressed: controller.togglePasswordVisibility,
                           ),
                         ),
                         const SizedBox(height: 32),
                         SizedBox(
                           width: double.infinity,
                           height: 56,
-                          child: Obx(
-                            () => ElevatedButton(
-                              onPressed: controller.isLoading.value
-                                  ? null
-                                  : controller.register,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFE17055),
-                                foregroundColor: Colors.white,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
+                          child: ElevatedButton(
+                            onPressed: controller.isLoading
+                                ? null
+                                : () => controller.register(context),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFE17055),
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
                               ),
-                              child: controller.isLoading.value
-                                  ? const SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                            Colors.white),
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Register',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
                             ),
+                            child: controller.isLoading
+                                ? const SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                    ),
+                                  )
+                                : const Text(
+                                    'Register',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                           ),
                         ),
                       ],

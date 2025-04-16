@@ -1,0 +1,2 @@
+/Users/apple/Desktop/todoTestTask/android/app/.cxx/Debug/385q1q3s/x86/CMakeFiles/rebuild_cache.dir
+/Users/apple/Desktop/todoTestTask/android/app/.cxx/Debug/385q1q3s/x86/CMakeFiles/edit_cache.dir

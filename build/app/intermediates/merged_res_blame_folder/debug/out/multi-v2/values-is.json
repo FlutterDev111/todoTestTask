@@ -4,7 +4,7 @@
             "outputFile": "com.example.todotask.app-mergeDebugResources-40:/values-is/values-is.xml",
             "map": [
                 {
-                    "source": "/Users/apple/.gradle/caches/transforms-3/a4dca8cc152078a346dad5de8d3f694e/transformed/core-1.13.1/res/values-is/values-is.xml",
+                    "source": "/Users/apple/.gradle/caches/transforms-3/e46b43d70fb4812c00d905b2c71cdd8f/transformed/core-1.13.1/res/values-is/values-is.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "/Users/apple/.gradle/caches/transforms-3/863bd1965ff06559e15873dfb56d28a9/transformed/appcompat-1.1.0/res/values-is/values-is.xml",
+                    "source": "/Users/apple/.gradle/caches/transforms-3/71fc3a1f5fdce5c2d3204b4330348ec8/transformed/appcompat-1.1.0/res/values-is/values-is.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -38,7 +38,7 @@
                     }
                 },
                 {
-                    "source": "/Users/apple/.gradle/caches/transforms-3/f5615d544d3570e122149c385e792d85/transformed/preference-1.2.1/res/values-is/values-is.xml",
+                    "source": "/Users/apple/.gradle/caches/transforms-3/cc6c19139356efafb63c5f6f02bbad1f/transformed/preference-1.2.1/res/values-is/values-is.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8",
                         "startColumns": "4,4,4,4,4,4,4",
