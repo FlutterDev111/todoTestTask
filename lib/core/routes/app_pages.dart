@@ -17,9 +17,9 @@ class AppPages {
       case AppRoutes.onboarding:
         return MaterialPageRoute(builder: (_) => const OnboardingPage());
       case AppRoutes.login:
-        return MaterialPageRoute(builder: (_) => const LoginPage());
+        return MaterialPageRoute(builder: (_) => LoginPage());
       case AppRoutes.signup:
-        return MaterialPageRoute(builder: (_) => const SignupPage());
+        return MaterialPageRoute(builder: (_) => SignupPage());
       case AppRoutes.home:
         return MaterialPageRoute(builder: (_) => const HomePage());
       default:

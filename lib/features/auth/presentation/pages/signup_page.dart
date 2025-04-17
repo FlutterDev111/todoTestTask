@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:todotask/core/routes/app_routes.dart';
+import 'package:get/get.dart';
 import 'package:todotask/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:todotask/features/auth/presentation/widgets/custom_input_field.dart';
 
@@ -9,7 +8,7 @@ class SignupPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<AuthController>();
+    final controller = Get.find<AuthController>();
     
     return Scaffold(
       backgroundColor: const Color(0xFFFFF5F1),
@@ -124,10 +123,10 @@ class SignupPage extends StatelessWidget {
                           keyboardType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 24),
-                        CustomInputField(
+                       /* CustomInputField(
                           label: 'Date of birth',
-                          controller: controller.dateController,
-                          validator: controller.validateDate,
+                          controller: controller.dateOfBirthController,
+                          validator: controller.validateDateOfBirth,
                           readOnly: true,
                           onTap: () async {
                             final date = await showDatePicker(
@@ -137,7 +136,7 @@ class SignupPage extends StatelessWidget {
                               lastDate: DateTime.now(),
                             );
                             if (date != null) {
-                              controller.dateController.text =
+                              controller.dateOfBirthController.text =
                                   '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
                             }
                           },
@@ -147,11 +146,11 @@ class SignupPage extends StatelessWidget {
                             size: 20,
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 24),*/
                         CustomInputField(
                           label: 'Phone Number',
-                          controller: controller.phoneController,
-                          validator: controller.validatePhone,
+                          controller: controller.phoneNumberController,
+                          validator: controller.validatePhoneNumber,
                           keyboardType: TextInputType.phone,
                           prefixText: '+91 ',
                         ),
@@ -160,10 +159,10 @@ class SignupPage extends StatelessWidget {
                           label: 'Set Password',
                           controller: controller.passwordController,
                           validator: controller.validatePassword,
-                          obscureText: !controller.isPasswordVisible,
+                          obscureText: !controller.isPasswordVisible.value,
                           suffixIcon: IconButton(
                             icon: Icon(
-                              controller.isPasswordVisible
+                              controller.isPasswordVisible.value
                                   ? Icons.visibility_off
                                   : Icons.visibility,
                               color: Colors.grey,
@@ -176,36 +175,36 @@ class SignupPage extends StatelessWidget {
                         SizedBox(
                           width: double.infinity,
                           height: 56,
-                          child: ElevatedButton(
-                            onPressed: controller.isLoading
-                                ? null
-                                : () => controller.register(context),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFE17055),
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                            child: controller.isLoading
-                                ? const SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Colors.white),
-                                    ),
-                                  )
-                                : const Text(
-                                    'Register',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                          child: Obx(() => ElevatedButton(
+                                onPressed: controller.isLoading.value
+                                    ? null
+                                    : () => controller.signUp(),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFE17055),
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
                                   ),
-                          ),
+                                ),
+                                child: controller.isLoading.value
+                                    ? const SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                              Colors.white),
+                                        ),
+                                      )
+                                    : const Text(
+                                        'Register',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                              )),
                         ),
                       ],
                     ),

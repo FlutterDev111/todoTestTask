@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">846790683902</string>
+    <string name="google_api_key" translatable="false">AIzaSyBNET5gzsS4RFHHwHTzCv5A7UEO1s9NQPE</string>
+    <string name="google_app_id" translatable="false">1:846790683902:android:74bfe00fab3be2364889af</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBNET5gzsS4RFHHwHTzCv5A7UEO1s9NQPE</string>
+    <string name="google_storage_bucket" translatable="false">todotesttask-213ab.firebasestorage.app</string>
+    <string name="project_id" translatable="false">todotesttask-213ab</string>
+</resources>

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.todotask.app-mergeDebugResources-40:/values-sw360dp-v13/values-sw360dp-v13.xml",
+            "outputFile": "com.example.todotask.app-mergeDebugResources-47:/values-sw360dp-v13/values-sw360dp-v13.xml",
             "map": [
                 {
                     "source": "/Users/apple/.gradle/caches/transforms-3/cc6c19139356efafb63c5f6f02bbad1f/transformed/preference-1.2.1/res/values-sw360dp-v13/values-sw360dp-v13.xml",
