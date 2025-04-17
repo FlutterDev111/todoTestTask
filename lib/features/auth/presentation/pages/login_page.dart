@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:todotask/core/routes/app_routes.dart';
+import 'package:get/get.dart';
 import 'package:todotask/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:todotask/features/auth/presentation/widgets/custom_input_field.dart';
 
@@ -9,7 +8,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<AuthController>();
+    final controller = Get.find<AuthController>();
     
     return Scaffold(
       backgroundColor: const Color(0xFFFFF5F1),
@@ -78,7 +77,7 @@ class LoginPage extends StatelessWidget {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () => controller.navigateToSignup(context),
+                              onTap: () => Get.toNamed('/signup'),
                               child: const Text(
                                 'Sign Up',
                                 style: TextStyle(
@@ -92,20 +91,36 @@ class LoginPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 32),
                         CustomInputField(
-                          label: 'Email',
                           controller: controller.emailController,
-                          validator: controller.validateEmail,
+                          label: 'Email',
                           keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email';
+                            }
+                            if (!GetUtils.isEmail(value)) {
+                              return 'Please enter a valid email';
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 24),
                         CustomInputField(
-                          label: 'Password',
                           controller: controller.passwordController,
-                          validator: controller.validatePassword,
-                          obscureText: !controller.isPasswordVisible,
+                          label: 'Password',
+                          obscureText: !controller.isPasswordVisible.value,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            if (value.length < 6) {
+                              return 'Password must be at least 6 characters';
+                            }
+                            return null;
+                          },
                           suffixIcon: IconButton(
                             icon: Icon(
-                              controller.isPasswordVisible
+                              controller.isPasswordVisible.value
                                   ? Icons.visibility_off
                                   : Icons.visibility,
                               color: Colors.grey,
@@ -123,12 +138,14 @@ class LoginPage extends StatelessWidget {
                                 SizedBox(
                                   width: 20,
                                   height: 20,
-                                  child: Checkbox(
-                                    value: controller.rememberMe,
-                                    onChanged: (_) => controller.toggleRememberMe(),
+                                  child: Obx(() => Checkbox(
+                                    value: controller.rememberMe.value,
+                                    onChanged: (value) {
+                                      controller.toggleRememberMe(value ?? false);
+                                    },
                                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                     visualDensity: VisualDensity.compact,
-                                  ),
+                                  )),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
@@ -141,9 +158,7 @@ class LoginPage extends StatelessWidget {
                               ],
                             ),
                             GestureDetector(
-                              onTap: () {
-                                // Implement forgot password
-                              },
+                              onTap: () => controller.forgotPassword(),
                               child: const Text(
                                 'Forgot Password ?',
                                 style: TextStyle(
@@ -159,10 +174,10 @@ class LoginPage extends StatelessWidget {
                         SizedBox(
                           width: double.infinity,
                           height: 56,
-                          child: ElevatedButton(
-                            onPressed: controller.isLoading
+                          child: Obx(() => ElevatedButton(
+                            onPressed: controller.isLoading.value
                                 ? null
-                                : () => controller.login(context),
+                                : () => controller.signInWithEmailAndPassword(),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFE17055),
                               foregroundColor: Colors.white,
@@ -171,7 +186,7 @@ class LoginPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(14),
                               ),
                             ),
-                            child: controller.isLoading
+                            child: controller.isLoading.value
                                 ? const SizedBox(
                                     width: 24,
                                     height: 24,
@@ -188,7 +203,7 @@ class LoginPage extends StatelessWidget {
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                          ),
+                          )),
                         ),
                       ],
                     ),

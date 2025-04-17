@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
+import 'package:todotask/core/services/firebase_auth_service.dart';
+import 'package:todotask/core/utils/validators.dart';
 
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/services/storage_service.dart';
@@ -7,222 +10,248 @@ import '../../data/models/user_model.dart';
 import '../pages/login_page.dart';
 import '../pages/signup_page.dart';
 
-class AuthController extends ChangeNotifier {
-  final formKey = GlobalKey<FormState>();
+class AuthController extends GetxController {
+  final FirebaseAuthService _authService = Get.find<FirebaseAuthService>();
   final StorageService storage;
   
-  late TextEditingController emailController;
-  late TextEditingController passwordController;
-  late TextEditingController fullNameController;
-  late TextEditingController dateController;
-  late TextEditingController phoneController;
+  // Form controllers
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final fullNameController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+  final dateOfBirthController = TextEditingController();
 
-  bool _isPasswordVisible = false;
-  bool _rememberMe = false;
-  bool _isLoading = false;
-  UserModel? _currentUser;
+  // Form validation
+  final formKey = GlobalKey<FormState>();
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+  final RxBool isPasswordVisible = false.obs;
+  final RxBool rememberMe = false.obs;
+  final Rx<UserModel?> currentUser = Rx<UserModel?>(null);
 
-  bool get isPasswordVisible => _isPasswordVisible;
-  bool get rememberMe => _rememberMe;
-  bool get isLoading => _isLoading;
-  UserModel? get currentUser => _currentUser;
+  // Validation methods
+  String? validateEmail(String? value) => Validators.validateEmail(value);
+  String? validatePassword(String? value) => Validators.validatePassword(value);
+  String? validateFullName(String? value) => Validators.validateFullName(value);
+  String? validatePhoneNumber(String? value) => Validators.validatePhoneNumber(value);
+  String? validateDateOfBirth(String? value) => Validators.validateDateOfBirth(value);
 
   AuthController({required this.storage}) {
-    initializeControllers();
     checkLoginStatus();
+    _setupAuthListener();
   }
 
-  void checkLoginStatus() {
-    if (storage.isLoggedIn()) {
-      _currentUser = storage.getUser();
-      notifyListeners();
+  void _setupAuthListener() {
+    _authService.authStateChanges.listen((User? firebaseUser) async {
+      if (firebaseUser != null) {
+        // Convert Firebase User to our UserModel
+        final userModel = UserModel(
+          id: firebaseUser.uid,
+          email: firebaseUser.email ?? '',
+          fullName: firebaseUser.displayName ?? '',
+          phoneNumber:  '',
+          dateOfBirth: '', // This will be empty as it's not part of Firebase Auth
+        );
+        
+        currentUser.value = userModel;
+        storage.saveUser(userModel);
+        Get.offAllNamed('/home');
+      } else {
+        currentUser.value = null;
+       // storage.clearUser();
+      }
+    });
+  }
+
+  void checkLoginStatus() async {
+    final user = await _authService.getCurrentUserModel();
+    if (user != null) {
+      currentUser.value = user;
     }
   }
 
   void initializeControllers() {
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
-    fullNameController = TextEditingController();
-    dateController = TextEditingController();
-    phoneController = TextEditingController();
+    emailController.clear();
+    passwordController.clear();
+    fullNameController.clear();
+    dateOfBirthController.clear();
+    phoneNumberController.clear();
   }
 
   void disposeControllers() {
     emailController.dispose();
     passwordController.dispose();
     fullNameController.dispose();
-    dateController.dispose();
-    phoneController.dispose();
+    dateOfBirthController.dispose();
+    phoneNumberController.dispose();
   }
 
   @override
-  void dispose() {
+  void onClose() {
     disposeControllers();
-    super.dispose();
+    super.onClose();
   }
 
   void clearControllers() {
     emailController.clear();
     passwordController.clear();
     fullNameController.clear();
-    dateController.clear();
-    phoneController.clear();
+    dateOfBirthController.clear();
+    phoneNumberController.clear();
   }
 
   void navigateToSignup(BuildContext context) {
-    Navigator.pushReplacementNamed(context, AppRoutes.signup);
+    clearControllers();
+    Get.toNamed(AppRoutes.signup);
   }
 
   void navigateToLogin(BuildContext context) {
-    Navigator.pushReplacementNamed(context, AppRoutes.login);
+    clearControllers();
+    Get.toNamed(AppRoutes.login);
   }
 
   void togglePasswordVisibility() {
-    _isPasswordVisible = !_isPasswordVisible;
-    notifyListeners();
+    isPasswordVisible.value = !isPasswordVisible.value;
   }
 
-  void toggleRememberMe() {
-    _rememberMe = !_rememberMe;
-    notifyListeners();
-  }
-
-  String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Email is required';
-    }
-    if (!value.contains('@') || !value.contains('.')) {
-      return 'Please enter a valid email';
-    }
-    return null;
-  }
-
-  String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Password is required';
-    }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-    return null;
-  }
-
-  String? validateFullName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Full name is required';
-    }
-    return null;
-  }
-
-  String? validateDate(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Date of birth is required';
-    }
-    return null;
-  }
-
-  String? validatePhone(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Phone number is required';
-    }
-    // Simple phone number validation
-    if (value.length < 10) {
-      return 'Please enter a valid phone number';
-    }
-    return null;
+  void toggleRememberMe(bool value) {
+    rememberMe.value = value;
   }
 
   void setLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
+    isLoading.value = value;
   }
 
   void setCurrentUser(UserModel? user) {
-    _currentUser = user;
-    notifyListeners();
+    currentUser.value = user;
   }
 
-  Future<void> login(BuildContext context) async {
+  Future<void> signInWithEmailAndPassword() async {
     if (!formKey.currentState!.validate()) return;
 
     try {
-      setLoading(true);
-      // Commenting out authentication for now
-      // await Future.delayed(const Duration(seconds: 2));
-      // final user = UserModel(
-      //   fullName: "Demo User",
-      //   email: emailController.text,
-      //   dateOfBirth: "01/01/1990",
-      //   phoneNumber: "+91 1234567890"
-      // );
-      // await storage.saveUser(user);
-      // await storage.saveIsLoggedIn(true);
-      // if (rememberMe) {
-      //   await storage.saveToken("mock_token");
-      // }
-      // setCurrentUser(user);
-      
-      clearControllers();
-      notifyListeners();
-      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      await _authService.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      );
+
+      // Navigation will be handled by the auth state listener
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Login failed. Please try again.'),
-          backgroundColor: Colors.red,
-        ),
+      errorMessage.value = e.toString();
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
     } finally {
-      setLoading(false);
+      isLoading.value = false;
     }
   }
 
-  Future<void> register(BuildContext context) async {
+  Future<void> signUp() async {
     if (!formKey.currentState!.validate()) return;
 
     try {
-      setLoading(true);
-      // Commenting out authentication for now
-      // final user = UserModel(
-      //   fullName: fullNameController.text,
-      //   email: emailController.text,
-      //   dateOfBirth: dateController.text,
-      //   phoneNumber: phoneController.text,
-      // );
-      // await Future.delayed(const Duration(seconds: 2));
-      // await storage.saveUser(user);
-      // await storage.saveIsLoggedIn(true);
-      // await storage.saveToken("mock_token");
-      // setCurrentUser(user);
-      
-      clearControllers();
-      notifyListeners();
-      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      await _authService.signUpWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text,
+        fullName: fullNameController.text.trim(),
+        phoneNumber: phoneNumberController.text.trim(),
+        dateOfBirth: dateOfBirthController.text.trim(),
+      );
+
+      // Navigation will be handled by the auth state listener
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Registration failed. Please try again.'),
-          backgroundColor: Colors.red,
-        ),
+      errorMessage.value = e.toString();
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
     } finally {
-      setLoading(false);
+      isLoading.value = false;
     }
   }
 
-  Future<void> logout(BuildContext context) async {
+  Future<void> signInWithGoogle() async {
     try {
-      await storage.clearAll();
-      _currentUser = null;
-      notifyListeners();
-      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) => false);
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      await _authService.signInWithGoogle();
+
+      // Navigation will be handled by the auth state listener
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Logout failed. Please try again.'),
-          backgroundColor: Colors.red,
-        ),
+      errorMessage.value = e.toString();
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> signOut() async {
+    try {
+      await _authService.signOut();
+      // State will be handled by the auth state listener
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Future<void> forgotPassword() async {
+    if (emailController.text.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Please enter your email address',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+      await _authService.resetPassword(emailController.text.trim());
+      Get.snackbar(
+        'Success',
+        'Password reset email sent. Please check your inbox.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
     }
   }
 } 

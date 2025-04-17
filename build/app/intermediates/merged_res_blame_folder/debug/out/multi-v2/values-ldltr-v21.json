@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.todotask.app-mergeDebugResources-40:/values-ldltr-v21/values-ldltr-v21.xml",
+            "outputFile": "com.example.todotask.app-mergeDebugResources-47:/values-ldltr-v21/values-ldltr-v21.xml",
             "map": [
                 {
                     "source": "/Users/apple/.gradle/caches/transforms-3/71fc3a1f5fdce5c2d3204b4330348ec8/transformed/appcompat-1.1.0/res/values-ldltr-v21/values-ldltr-v21.xml",
