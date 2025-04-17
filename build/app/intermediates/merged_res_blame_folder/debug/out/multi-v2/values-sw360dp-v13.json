@@ -4,7 +4,7 @@
             "outputFile": "com.example.todotask.app-mergeDebugResources-47:/values-sw360dp-v13/values-sw360dp-v13.xml",
             "map": [
                 {
-                    "source": "/Users/apple/.gradle/caches/transforms-3/cc6c19139356efafb63c5f6f02bbad1f/transformed/preference-1.2.1/res/values-sw360dp-v13/values-sw360dp-v13.xml",
+                    "source": "/Users/appletw/.gradle/caches/transforms-3/e4fed11353dad1bd521398a8f13e9b3a/transformed/preference-1.2.1/res/values-sw360dp-v13/values-sw360dp-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

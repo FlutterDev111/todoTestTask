@@ -1,0 +1,1 @@
+ /Users/appletw/Documents/test-task/todoTestTask/.dart_tool/flutter_build/53413927177bae8c5a3e92bcade509d1/native_assets.yaml: 

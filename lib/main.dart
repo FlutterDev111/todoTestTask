@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.home,
       getPages: [
         GetPage(name: AppRoutes.login, page: () => LoginPage()),
         GetPage(name: AppRoutes.signup, page: () => SignupPage()),
