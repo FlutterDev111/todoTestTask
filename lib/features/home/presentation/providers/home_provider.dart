@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todotask/core/services/firebase_service.dart';
 import '../../../../core/services/firebase_auth_service.dart';
+import '../../../../core/services/storage_service.dart';
 import '../../../../model/test_model.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 
+import '../../../onboarding/presentation/providers/onboarding_provider.dart';
 import '../widgets/add_options_sheet.dart';
 import '../widgets/bottom_sheets/custom_task_sheet.dart';
 
@@ -25,6 +28,7 @@ class HomeProvider extends ChangeNotifier {
   String _selectedTime = '10:30 AM';
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  List<TaskModel> items = [];
 
   HomeProvider({
     required this.authProvider,
@@ -153,6 +157,8 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> saveTaskToFirestore() async {
+    StorageService _storageService = StorageService();
+    final hasloggedIn = await _storageService.getString('logged_in') ?? "";
     // if (_selectedDate == null || selectedPriority == null) return;
     final task = TaskModel(
       title: titleController.text,
@@ -163,7 +169,7 @@ class HomeProvider extends ChangeNotifier {
     );
 
     await FirebaseService.createOrUpdate(
-        collection: "add_todo", data: task.toMap());
+        collection: "add_todo", docId: hasloggedIn, data: task.toMap());
   }
 
   // Add more methods for home page functionality here
@@ -172,6 +178,7 @@ class HomeProvider extends ChangeNotifier {
   // - Update todo
   // - Delete todo
   // - Get todos
+  
   // - Filter todos
   // etc.
 }

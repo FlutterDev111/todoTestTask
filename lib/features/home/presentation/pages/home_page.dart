@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todotask/core/services/firebase_service.dart';
+import 'package:todotask/core/services/storage_service.dart';
+import 'package:todotask/core/services/user_singlton.dart';
+import 'package:todotask/model/test_model.dart';
 import '../providers/home_provider.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/task_button.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  
+ HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  
   @override
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
@@ -35,7 +41,10 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 10),
                   const Text(
                     "Mon 20 March 2024",
-                    style: TextStyle(fontSize: 16, color: Color(0xff767E8C), fontWeight: FontWeight.w400),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Color(0xff767E8C),
+                        fontWeight: FontWeight.w400),
                   ),
                   const SizedBox(height: 16),
                   Container(
@@ -64,26 +73,44 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 20),
                   Row(
                     children: [
-                      TaskTypeButton(text: "To-Do"),
+                      const TaskTypeButton(text: "To-Do"),
                       const SizedBox(width: 9),
-                      TaskTypeButton(text: "Habit"),
+                      const TaskTypeButton(text: "Habit"),
                       const SizedBox(width: 9),
-                      TaskTypeButton(text: "Journal"),
+                      const TaskTypeButton(text: "Journal"),
                       const SizedBox(width: 9),
-                      TaskTypeButton(text: "Note"),
+                      const TaskTypeButton(text: "Note"),
                       const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF6F6F6),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Image.asset(
-                          "assets/img/Vector.png",
-                          height: 25,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
+                      StreamBuilder<Map<String, dynamic>?>(
+                        stream: FirebaseService()
+                            .listenToUserById(UserSession().userId ?? "", "add_todo"),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data != null) {
+                            final user = snapshot.data!;
+                            return Expanded(
+                                child: ListView.builder(
+                              itemCount: user.length,
+                              itemBuilder: (context, index) {
+                                _buildNotificationCard(
+                                    TaskModel.fromJson(user));
+                              },
+                            ));
+                          } else {
+                            return Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF6F6F6),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Image.asset(
+                                "assets/img/Vector.png",
+                                height: 25,
+                                fit: BoxFit.contain,
+                              ),
+                            );
+                          }
+                        },
+                      )
                     ],
                   ),
                   const SizedBox(height: 60),
@@ -123,7 +150,8 @@ class _HomePageState extends State<HomePage> {
                     _buildOptionButton(context, homeProvider, "Setup Habit"),
                     _buildOptionButton(context, homeProvider, "Add List"),
                     _buildOptionButton(context, homeProvider, "Add Note"),
-                    _buildOptionButton(context, homeProvider, "Add Todo", highlight: true),
+                    _buildOptionButton(context, homeProvider, "Add Todo",
+                        highlight: true),
                     const SizedBox(height: 10),
                   ],
                 ),
@@ -137,7 +165,8 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: const Color(0xFFD86628),
-                    borderRadius: BorderRadius.circular(homeProvider.showAddOptions ? 12:28),
+                    borderRadius: BorderRadius.circular(
+                        homeProvider.showAddOptions ? 12 : 28),
                   ),
                   child: Icon(
                     homeProvider.showAddOptions ? Icons.close : Icons.add,
@@ -153,7 +182,152 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildOptionButton(BuildContext context, HomeProvider provider, String label, {bool highlight = false}) {
+  Widget _buildNotificationCard(TaskModel taskData) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.red.withOpacity(0.1),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.flag_outlined,
+                  size: 16,
+                  color: Colors.red,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  taskData.priority,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const Spacer(),
+                const Icon(
+                  Icons.more_horiz,
+                  color: Color(0xFF1D1517),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFD86628).withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.person_outline,
+                            color: Color(0xFFD86628),
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          taskData.title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF1D1517),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Container(
+                    //   padding: const EdgeInsets.symmetric(
+                    //     horizontal: 12,
+                    //     vertical: 6,
+                    //   ),
+                    //   decoration: BoxDecoration(
+                    //     color: statusColor.withOpacity(0.1),
+                    //     borderRadius: BorderRadius.circular(20),
+                    //   ),
+                    //   child: Text(
+                    //     ,
+                    //     style: TextStyle(
+                    //       color: statusColor,
+                    //       fontSize: 12,
+                    //       fontWeight: FontWeight.w500,
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  taskData.description,
+                  style: const TextStyle(
+                    color: Color(0xFF7B6F72),
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.access_time,
+                      size: 16,
+                      color: Color(0xFF7B6F72),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      taskData.time,
+                      style: const TextStyle(
+                        color: Color(0xFF7B6F72),
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      taskData.dueDate.toString(),
+                      style: const TextStyle(
+                        color: Color(0xFF7B6F72),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOptionButton(
+      BuildContext context, HomeProvider provider, String label,
+      {bool highlight = false}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       child: ElevatedButton(
@@ -181,4 +355,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
