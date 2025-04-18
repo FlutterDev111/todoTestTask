@@ -4,12 +4,12 @@
 4
 5    <uses-sdk
 6        android:minSdkVersion="19"
-6-->/Users/apple/.pub-cache/hosted/pub.dev/google_sign_in_android-6.2.0/android/src/main/AndroidManifest.xml
+6-->/Users/macbookpro/.pub-cache/hosted/pub.dev/google_sign_in_android-6.2.0/android/src/main/AndroidManifest.xml
 7        android:targetSdkVersion="19" />
-7-->/Users/apple/.pub-cache/hosted/pub.dev/google_sign_in_android-6.2.0/android/src/main/AndroidManifest.xml
+7-->/Users/macbookpro/.pub-cache/hosted/pub.dev/google_sign_in_android-6.2.0/android/src/main/AndroidManifest.xml
 8
 9    <uses-permission android:name="android.permission.INTERNET" />
-9-->/Users/apple/.pub-cache/hosted/pub.dev/google_sign_in_android-6.2.0/android/src/main/AndroidManifest.xml:4:3-64
-9-->/Users/apple/.pub-cache/hosted/pub.dev/google_sign_in_android-6.2.0/android/src/main/AndroidManifest.xml:4:20-62
+9-->/Users/macbookpro/.pub-cache/hosted/pub.dev/google_sign_in_android-6.2.0/android/src/main/AndroidManifest.xml:4:3-64
+9-->/Users/macbookpro/.pub-cache/hosted/pub.dev/google_sign_in_android-6.2.0/android/src/main/AndroidManifest.xml:4:20-62
 10
 11</manifest>

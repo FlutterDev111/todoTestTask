@@ -5,7 +5,6 @@ import '../../providers/home_provider.dart';
 import '../menu/priority_menu.dart';
 import 'due_date_picker.dart';
 
-
 class CustomTaskSheet extends StatelessWidget {
   final String? selectedOption;
 
@@ -65,7 +64,7 @@ class CustomTaskSheet extends StatelessWidget {
                           border: InputBorder.none,
                         ),
                       ),
-                       TextField(
+                      TextField(
                         controller: controller.descriptionController,
                         decoration: const InputDecoration(
                           hintText: "Description",
@@ -93,7 +92,7 @@ class CustomTaskSheet extends StatelessWidget {
                           GestureDetector(
                             onTap: () {
                               controller.selectIcon('time');
-                              showTimePickerSheet(context, controller);
+                              showTimePickerSheet(context, controller);  
                             },
                             child: Icon(
                               Icons.access_time_filled,
@@ -119,10 +118,11 @@ class CustomTaskSheet extends StatelessWidget {
                           const Spacer(),
                           GestureDetector(
                             onTap: () async {
-                            //  await controller.saveTaskToFirestore();
-                              Navigator.pop(context); 
+                              controller.saveTaskToFirestore();
+                              Navigator.pop(context);
                             },
-                            child: const Icon(Icons.send, color: Color(0xFFD86628)),
+                            child: const Icon(Icons.send,
+                                color: Color(0xFFD86628)),
                           ),
                         ],
                       ),
