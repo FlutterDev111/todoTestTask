@@ -28,7 +28,30 @@ class AuthProvider extends ChangeNotifier {
   String? _errorMessage;
   UserModel? _currentUser;
 
-  AuthProvider(this._authService, this._storageService);
+  AuthProvider(this._authService, this._storageService) {
+    _initializeAuth();
+  }
+
+  Future<void> _initializeAuth() async {
+    try {
+      final userId = await _storageService.getString('user_id');
+      final userEmail = await _storageService.getString('user_email');
+      final userName = await _storageService.getString('user_name');
+      final rememberMe = await _storageService.getBool('remember_me');
+
+      if (userId != null && userEmail != null && userName != null && rememberMe == true) {
+        _currentUser = UserModel(
+          id: userId,
+          email: userEmail,
+          fullName: userName, dateOfBirth: '', phoneNumber: '',
+        );
+        _rememberMe = true;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error initializing auth: $e');
+    }
+  }
 
   // Getters
   bool get isLoading => _isLoading;
@@ -119,12 +142,13 @@ class AuthProvider extends ChangeNotifier {
       );
 
       _currentUser = user;
+      await _storageService.setString('logged_in', user.id);
       await saveUserSession(user);
-
+      await _storageService.setBool('onboarding_completed', true);
       if (context.mounted) {
         Navigator.pushNamedAndRemoveUntil(
           context,
-          '/home',
+          '/main',
           (route) => false,
         );
       }
@@ -159,11 +183,12 @@ class AuthProvider extends ChangeNotifier {
 
       _currentUser = user;
       await saveUserSession(user);
-
+      await _storageService.setString('logged_in', user.id);
+      await _storageService.setBool('onboarding_completed', true);
       if (context.mounted) {
         Navigator.pushNamedAndRemoveUntil(
           context,
-          '/home',
+          '/main',
           (route) => false,
         );
       }
@@ -192,11 +217,11 @@ class AuthProvider extends ChangeNotifier {
       _currentUser = user;
       await saveUserSession(user);
 
-      // Navigate to home page and remove all previous routes
+      // Navigate to main navigation page and remove all previous routes
       if (context.mounted) {
         Navigator.pushNamedAndRemoveUntil(
           context,
-          '/home',
+          '/main',
           (route) => false,
         );
       }

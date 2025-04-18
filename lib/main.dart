@@ -10,6 +10,7 @@ import 'package:todotask/features/onboarding/presentation/providers/onboarding_p
 import 'package:todotask/features/home/presentation/providers/home_provider.dart';
 import 'package:todotask/core/services/storage_service.dart';
 import 'package:todotask/core/services/firebase_auth_service.dart';
+import 'package:todotask/features/navigation/presentation/pages/main_navigation.dart';
 
 import 'core/services/firebase_service.dart';
 import 'features/splash/presentation/pages/splash_page.dart';
@@ -21,8 +22,12 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
+    // Initialize StorageService
+    final storageService = StorageService();
+    await storageService.init();
     
-    runApp(const MyApp());
+    runApp(MyApp(storageService: storageService));
   } catch (e) {
     runApp(
       MaterialApp(
@@ -50,14 +55,19 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final StorageService storageService;
+
+  const MyApp({
+    required this.storageService,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         Provider<StorageService>(
-          create: (_) => StorageService(),
+          create: (_) => storageService,
         ),
         Provider<FirebaseAuthService>(
           create: (_) => FirebaseAuthService(),
@@ -92,7 +102,7 @@ class MyApp extends StatelessWidget {
           '/onboarding': (context) => const OnboardingPage(),
           '/login': (context) => const LoginPage(),
           '/signup': (context) => const SignupPage(),
-          '/home': (context) => const HomePage(),
+          '/main': (context) => const MainNavigation(),
         },
       ),
     );
