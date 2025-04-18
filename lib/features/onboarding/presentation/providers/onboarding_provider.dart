@@ -17,6 +17,14 @@ class OnboardingProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   // Methods
+  Future<bool> hasCompletedOnboarding() async {
+    return await _storageService.getBool('onboarding_completed') ?? false;
+  }
+
+  Future<String> hasLoggedIn() async {
+    return await _storageService.getString('logged_in') ?? "";
+  }
+
   void nextPage() {
     if (_currentPage < 2) {
       _pageController.nextPage(
