@@ -17,14 +17,15 @@ class FirebaseService {
     required Map<String, dynamic> data,
     String? docId,
   }) async {
+    var customMap = {
+      "memberIds": [docId]
+    };
+    data.addEntries(customMap.entries);
     try {
-      final ref = firestore.collection(collection);
-      if (docId != null) {
-        await ref.doc(docId).set(data);
-      } else {
-        await ref.add(data);
-      }
-      print(ref.toString());
+      final ref = firestore.collection(collection).add(data);
+      ref.then(
+        (value) => print(value.id),
+      );
     } catch (e) {
       print(e.toString());
     }
@@ -48,17 +49,22 @@ class FirebaseService {
     return snapshot.docs.map((doc) => {...doc.data(), 'id': doc.id}).toList();
   }
 
-  Stream<Map<String, dynamic>?> listenToUserById(String id, collection) {
+  Stream<List<Map<String, dynamic>>> listenToUserById(String id, collection) {
     return FirebaseFirestore.instance
-        .collection(collection)
-        .where(FieldPath.documentId, isEqualTo: id)
+        .collection('collection')
+        .where("memberIds", arrayContains: id)
         .snapshots()
         .map((snapshot) {
       if (snapshot.docs.isNotEmpty) {
-        final doc = snapshot.docs.first;
-        return {...doc.data(), 'id': doc.id};
+        return snapshot.docs
+            .map((doc) => {
+                  ...doc.data(),
+                  'id': doc.id,
+                })
+            .toList();
+      } else {
+        return [];
       }
-      return null;
     });
   }
 

@@ -9,15 +9,13 @@ import '../widgets/bottom_nav_bar.dart';
 import '../widgets/task_button.dart';
 
 class HomePage extends StatefulWidget {
-  
- HomePage({super.key});
+  HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  
   @override
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
@@ -81,9 +79,9 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(width: 9),
                       const TaskTypeButton(text: "Note"),
                       const Spacer(),
-                      StreamBuilder<Map<String, dynamic>?>(
-                        stream: FirebaseService()
-                            .listenToUserById(UserSession().userId ?? "", "add_todo"),
+                      StreamBuilder<List<Map<String, dynamic>>>(
+                        stream: FirebaseService().listenToUserById(
+                            UserSession().userId ?? "", "add_todo"),
                         builder: (context, snapshot) {
                           if (snapshot.hasData && snapshot.data != null) {
                             final user = snapshot.data!;
@@ -92,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                               itemCount: user.length,
                               itemBuilder: (context, index) {
                                 _buildNotificationCard(
-                                    TaskModel.fromJson(user));
+                                    TaskModel.fromJson(user[index]));
                               },
                             ));
                           } else {
