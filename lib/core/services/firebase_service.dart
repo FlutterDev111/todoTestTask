@@ -24,12 +24,12 @@ class DefaultFirebaseOptions {
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       return const FirebaseOptions(
-        apiKey: 'YOUR-IOS-API-KEY',
-        appId: 'YOUR-IOS-APP-ID',
-        messagingSenderId: 'YOUR-SENDER-ID',
-        projectId: 'YOUR-PROJECT-ID',
-        storageBucket: 'YOUR-STORAGE-BUCKET',
-        iosClientId: 'YOUR-IOS-CLIENT-ID',
+        apiKey: 'AIzaSyBNET5gzsS4RFHHwHTzCv5A7UEO1s9NQPE',
+        appId: '1:846790683902:ios:74bfe00fab3be2364889af',
+        messagingSenderId: '846790683902',
+        projectId: 'todotesttask-213ab',
+        storageBucket: 'todotesttask-213ab.firebasestorage.app',
+        iosClientId: '846790683902-abc123def456.apps.googleusercontent.com',
         iosBundleId: 'com.example.todotask',
       );
     }

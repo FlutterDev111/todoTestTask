@@ -63,7 +63,10 @@ class MyApp extends StatelessWidget {
           create: (_) => FirebaseAuthService(),
         ),
         ChangeNotifierProvider<AuthProvider>(
-          create: (context) => AuthProvider(context.read<FirebaseAuthService>()),
+          create: (context) => AuthProvider(
+            context.read<FirebaseAuthService>(),
+            context.read<StorageService>(),
+          ),
         ),
         ChangeNotifierProvider<OnboardingProvider>(
           create: (context) => OnboardingProvider(

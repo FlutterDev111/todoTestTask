@@ -3,11 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:todotask/core/services/firebase_auth_service.dart';
+import 'package:todotask/core/services/storage_service.dart';
 
 import '../../data/models/user_model.dart';
 
 class AuthProvider extends ChangeNotifier {
   final FirebaseAuthService _authService;
+  final StorageService _storageService;
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -21,8 +23,7 @@ class AuthProvider extends ChangeNotifier {
   String? _errorMessage;
   UserModel? _currentUser;
 
-  AuthProvider([FirebaseAuthService? authService]) 
-      : _authService = authService ?? FirebaseAuthService();
+  AuthProvider(this._authService, this._storageService);
 
   // Getters
   GlobalKey<FormState> get formKey => _formKey;
@@ -62,9 +63,64 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email';
+    }
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your password';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return null;
+  }
+
+  String? validateFullName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your full name';
+    }
+    return null;
+  }
+
+  String? validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your phone number';
+    }
+    if (!RegExp(r'^\+?[\d\s-]+$').hasMatch(value)) {
+      return 'Please enter a valid phone number';
+    }
+    return null;
+  }
+
+  String? validateDateOfBirth(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your date of birth';
+    }
+    return null;
+  }
+
+  Future<void> saveUserSession(UserModel user) async {
+    await _storageService.setString('user_id', user.id);
+    await _storageService.setString('user_email', user.email);
+    await _storageService.setString('user_name', user.fullName);
+    if (_rememberMe) {
+      await _storageService.setBool('remember_me', true);
+    }
+  }
+
   // Sign in with email and password
-  Future<void> signInWithEmailAndPassword() async {
-    if (!_formKey.currentState!.validate()) return;
+  Future<void> signIn(BuildContext context) async {
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
 
     _isLoading = true;
     _errorMessage = null;
@@ -75,9 +131,26 @@ class AuthProvider extends ChangeNotifier {
         email: emailController.text.trim(),
         password: passwordController.text,
       );
+
       _currentUser = user;
+      await saveUserSession(user);
+
+      // Navigate to home page and remove all previous routes
+      if (context.mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/home',
+          (route) => false,
+        );
+      }
     } catch (e) {
       _errorMessage = e.toString();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_errorMessage!),
+          backgroundColor: Colors.red,
+        ),
+      );
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -85,15 +158,32 @@ class AuthProvider extends ChangeNotifier {
   }
 
   // Sign in with Google
-  Future<void> signInWithGoogle() async {
+  Future<void> signInWithGoogle(BuildContext context) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      await _authService.signInWithGoogle();
+      final user = await _authService.signInWithGoogle();
+      _currentUser = user;
+      await saveUserSession(user);
+
+      // Navigate to home page and remove all previous routes
+      if (context.mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/home',
+          (route) => false,
+        );
+      }
     } catch (e) {
       _errorMessage = e.toString();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_errorMessage!),
+          backgroundColor: Colors.red,
+        ),
+      );
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -101,15 +191,31 @@ class AuthProvider extends ChangeNotifier {
   }
 
   // Sign out
-  Future<void> signOut() async {
+  Future<void> signOut(BuildContext context) async {
     _isLoading = true;
     notifyListeners();
 
     try {
       await _authService.signOut();
+      await _storageService.clear();
       _currentUser = null;
+
+      // Navigate to login page and remove all previous routes
+      if (context.mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/login',
+          (route) => false,
+        );
+      }
     } catch (e) {
       _errorMessage = e.toString();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_errorMessage!),
+          backgroundColor: Colors.red,
+        ),
+      );
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -132,21 +238,43 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> signUp() async {
+  Future<void> signUp(BuildContext context) async {
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      await _authService.signUpWithEmailAndPassword(
+      final user = await _authService.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text,
-        fullName: fullNameController.text,
-        phoneNumber: phoneController.text,
-        dateOfBirth: dateOfBirthController.text,
+        fullName: fullNameController.text.trim(),
+        phoneNumber: phoneController.text.trim(),
+        dateOfBirth: dateOfBirthController.text.trim(),
       );
+
+      _currentUser = user;
+      await saveUserSession(user);
+
+      // Navigate to home page and remove all previous routes
+      if (context.mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/home',
+          (route) => false,
+        );
+      }
     } catch (e) {
       _errorMessage = e.toString();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_errorMessage!),
+          backgroundColor: Colors.red,
+        ),
+      );
     } finally {
       _isLoading = false;
       notifyListeners();
