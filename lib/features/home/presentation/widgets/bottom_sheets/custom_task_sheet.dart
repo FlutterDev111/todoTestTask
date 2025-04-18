@@ -92,7 +92,7 @@ class CustomTaskSheet extends StatelessWidget {
                           GestureDetector(
                             onTap: () {
                               controller.selectIcon('time');
-                              showTimePickerSheet(context, controller);
+                              showTimePickerSheet(context, controller);  
                             },
                             child: Icon(
                               Icons.access_time_filled,

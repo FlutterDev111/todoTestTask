@@ -153,12 +153,12 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> saveTaskToFirestore() async {
-    if (_selectedDate == null || selectedPriority == null) return;
+    // if (_selectedDate == null || selectedPriority == null) return;
     final task = TaskModel(
       title: titleController.text,
       description: descriptionController.text,
-      dueDate: _selectedDate!,
-      time: _selectedTime,
+      dueDate: DateTime.now(),
+      time: "01:25",
       priority: selectedPriority!,
     );
 
