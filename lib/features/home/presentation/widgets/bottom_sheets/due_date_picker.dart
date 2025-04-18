@@ -50,28 +50,26 @@ void showDueDatePicker(BuildContext context, HomeProvider controller) {
                 ],
               ),
               const Divider(height: 30),
-
   Consumer<HomeProvider>(
   builder: (_, controller, __) {
-    return TableCalendar(
-      firstDay: DateTime(2020),
-      lastDay: DateTime(2030),
-      focusedDay: controller.focusedDate,
-      selectedDayPredicate: (day) =>
-          isSameDay(day, controller.tempSelectedDate),
-      onDaySelected: controller.updateTempSelectedDate,
-      calendarStyle: CalendarStyle(
-        todayDecoration: BoxDecoration(
-          color: Colors.orange,
-          shape: BoxShape.rectangle,
-        ),
-        selectedDecoration: BoxDecoration(
-          color: const Color(0xFFEB5E00),
-          shape: BoxShape.rectangle,
-        ),
-      ),
-    );
-  }),
+              return TableCalendar(
+                firstDay: DateTime(2020),
+                lastDay: DateTime(2030),
+                focusedDay: controller.focusedDate,
+                selectedDayPredicate: (day) =>
+                    isSameDay(day, controller.tempSelectedDate),
+                onDaySelected: controller.updateTempSelectedDate,
+                calendarStyle: CalendarStyle(
+                  todayDecoration: BoxDecoration(
+                    color: Colors.orange,
+                      shape: BoxShape.rectangle
+                  ),
+                  selectedDecoration: BoxDecoration(
+                    color: const Color(0xFFEB5E00),
+                    shape: BoxShape.rectangle
+                  ),
+                ),
+              );}),
               const SizedBox(height: 20),
               Row(
                 children: [

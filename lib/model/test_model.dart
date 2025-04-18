@@ -3,12 +3,14 @@ class TaskModel {
   final String description;
   final DateTime dueDate;
   final String time;
+  final String? id;
   final String priority;
 
   TaskModel({
     required this.title,
     required this.description,
     required this.dueDate,
+     this.id,
     required this.time,
     required this.priority,
   });
@@ -31,6 +33,7 @@ class TaskModel {
       description: map['description'] ?? '',
       dueDate: DateTime.parse(map['dueDate']),
       time: map['time'] ?? '',
+      id: map['id'] ?? '',
       priority: map['priority'] ?? '',
     );
   }
