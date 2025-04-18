@@ -88,8 +88,9 @@ class _HomePageState extends State<HomePage> {
                             return Expanded(
                                 child: ListView.builder(
                               itemCount: user.length,
+                              shrinkWrap: true,
                               itemBuilder: (context, index) {
-                                _buildNotificationCard(
+                                return _buildNotificationCard(
                                     TaskModel.fromJson(user[index]));
                               },
                             ));
