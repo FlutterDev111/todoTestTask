@@ -118,14 +118,7 @@ class CustomTaskSheet extends StatelessWidget {
                           const Spacer(),
                           GestureDetector(
                             onTap: () async {
-                              
-                              controller.saveTaskToFirestore({
-                                "title": controller.titleController.text.trim(),
-                                "descrption": controller.descriptionController.text.trim(),
-                                "priority": controller.,
-                                "selectedDueDate": "",
-                                "selectedDueTime": "",
-                              });
+                              controller.saveTaskToFirestore();
                               Navigator.pop(context);
                             },
                             child: const Icon(Icons.send,

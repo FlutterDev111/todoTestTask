@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todotask/core/services/firebase_service.dart';
 import '../../../../core/services/firebase_auth_service.dart';
+import '../../../../model/test_model.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 
 import '../widgets/add_options_sheet.dart';
@@ -151,17 +152,18 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> saveTaskToFirestore(Map<String, dynamic> todoData) async {
-      if (_selectedDate == null || selectedPriority == null) return;
-  final task = TaskModel(
-    title: titleController.text,
-    description: descriptionController.text,
-    dueDate: _selectedDate!,
-    time: _selectedTime,
-    priority: selectedPriority!,
-  );
+  Future<void> saveTaskToFirestore() async {
+    if (_selectedDate == null || selectedPriority == null) return;
+    final task = TaskModel(
+      title: titleController.text,
+      description: descriptionController.text,
+      dueDate: _selectedDate!,
+      time: _selectedTime,
+      priority: selectedPriority!,
+    );
 
-    await FirebaseService.createOrUpdate(collection: "add_todo", data: todoData);
+    await FirebaseService.createOrUpdate(
+        collection: "add_todo", data: task.toMap());
   }
 
   // Add more methods for home page functionality here
