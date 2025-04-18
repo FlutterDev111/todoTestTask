@@ -79,40 +79,28 @@ class OnboardingPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
+                    InkWell(
+                      onTap: (){
                         if (onboardingProvider.currentPage == 2) {
                           Navigator.pushReplacementNamed(context, '/login');
                         } else {
                           onboardingProvider.nextPage();
                         }
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFD86628),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 16,
+                      child: Container(
+                        width: 60,  // Diameter
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFEB5E00),
+                          shape: BoxShape.circle,
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            onboardingProvider.currentPage == 2
-                                ? 'Get Started'
-                                : 'Next',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.white,
+                            size: 20,
                           ),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.arrow_forward, size: 20),
-                        ],
+                        ),
                       ),
                     ),
                   ],

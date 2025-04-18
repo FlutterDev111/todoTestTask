@@ -65,11 +65,11 @@ class _HomePageState extends State<HomePage> {
                   Row(
                     children: [
                       TaskTypeButton(text: "To-Do"),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 9),
                       TaskTypeButton(text: "Habit"),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 9),
                       TaskTypeButton(text: "Journal"),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 9),
                       TaskTypeButton(text: "Note"),
                       const Spacer(),
                       Container(
@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Image.asset(
-                          "assets/img/filter.png",
+                          "assets/img/Vector.png",
                           height: 25,
                           fit: BoxFit.contain,
                         ),
@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 60),
                   Image.asset(
-                    "assets/img/hooray.png",
+                    "assets/img/horrey.png",
                     height: 280,
                     fit: BoxFit.fill,
                   ),

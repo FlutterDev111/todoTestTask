@@ -10,7 +10,12 @@ import '../../data/models/user_model.dart';
 class AuthProvider extends ChangeNotifier {
   final FirebaseAuthService _authService;
   final StorageService _storageService;
-  final _formKey = GlobalKey<FormState>();
+  
+  // Form keys
+  final loginFormKey = GlobalKey<FormState>();
+  final signupFormKey = GlobalKey<FormState>();
+  
+  // Controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final fullNameController = TextEditingController();
@@ -26,38 +31,17 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider(this._authService, this._storageService);
 
   // Getters
-  GlobalKey<FormState> get formKey => _formKey;
-  // TextEditingController get emailController => emailController;
-  // TextEditingController get passwordController => passwordController;
-  // TextEditingController get fullNameController => fullNameController;
-  // TextEditingController get phoneController => phoneController;
-  // TextEditingController get dateOfBirthController => dateOfBirthController;
   bool get isLoading => _isLoading;
   bool get isPasswordVisible => _isPasswordVisible;
   bool get rememberMe => _rememberMe;
   String? get errorMessage => _errorMessage;
   UserModel? get currentUser => _currentUser;
 
-  // Dispose method
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    fullNameController.dispose();
-    phoneController.dispose();
-    dateOfBirthController.dispose();
-    super.dispose();
-  }
-
-  // Auth state listener
-
-  // Toggle password visibility
   void togglePasswordVisibility() {
     _isPasswordVisible = !_isPasswordVisible;
     notifyListeners();
   }
 
-  // Toggle remember me
   void toggleRememberMe() {
     _rememberMe = !_rememberMe;
     notifyListeners();
@@ -116,9 +100,50 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Sign in with email and password
+  Future<void> signUp(BuildContext context) async {
+    if (!signupFormKey.currentState!.validate()) {
+      return;
+    }
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final user = await _authService.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text,
+        fullName: fullNameController.text.trim(),
+        phoneNumber: phoneController.text.trim(),
+        dateOfBirth: dateOfBirthController.text.trim(),
+      );
+
+      _currentUser = user;
+      await saveUserSession(user);
+
+      if (context.mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/home',
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_errorMessage!),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> signIn(BuildContext context) async {
-    if (!formKey.currentState!.validate()) {
+    if (!loginFormKey.currentState!.validate()) {
       return;
     }
 
@@ -135,7 +160,6 @@ class AuthProvider extends ChangeNotifier {
       _currentUser = user;
       await saveUserSession(user);
 
-      // Navigate to home page and remove all previous routes
       if (context.mounted) {
         Navigator.pushNamedAndRemoveUntil(
           context,
@@ -238,46 +262,25 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> signUp(BuildContext context) async {
-    if (!formKey.currentState!.validate()) {
-      return;
-    }
-
-    _isLoading = true;
+  void clearForm() {
+    emailController.clear();
+    passwordController.clear();
+    fullNameController.clear();
+    phoneController.clear();
+    dateOfBirthController.clear();
+    _isPasswordVisible = false;
+    _rememberMe = false;
     _errorMessage = null;
     notifyListeners();
+  }
 
-    try {
-      final user = await _authService.createUserWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text,
-        fullName: fullNameController.text.trim(),
-        phoneNumber: phoneController.text.trim(),
-        dateOfBirth: dateOfBirthController.text.trim(),
-      );
-
-      _currentUser = user;
-      await saveUserSession(user);
-
-      // Navigate to home page and remove all previous routes
-      if (context.mounted) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/home',
-          (route) => false,
-        );
-      }
-    } catch (e) {
-      _errorMessage = e.toString();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_errorMessage!),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    fullNameController.dispose();
+    phoneController.dispose();
+    dateOfBirthController.dispose();
+    super.dispose();
   }
 }
