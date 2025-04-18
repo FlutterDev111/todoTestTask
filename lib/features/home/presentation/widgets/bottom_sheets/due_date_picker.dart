@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../providers/home_provider.dart';
@@ -49,24 +50,28 @@ void showDueDatePicker(BuildContext context, HomeProvider controller) {
                 ],
               ),
               const Divider(height: 30),
-              TableCalendar(
-                firstDay: DateTime(2020),
-                lastDay: DateTime(2030),
-                focusedDay: controller.focusedDate,
-                selectedDayPredicate: (day) =>
-                    isSameDay(day, controller.tempSelectedDate),
-                onDaySelected: controller.updateTempSelectedDate,
-                calendarStyle: CalendarStyle(
-                  todayDecoration: BoxDecoration(
-                    color: Colors.orange,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  selectedDecoration: BoxDecoration(
-                    color: const Color(0xFFEB5E00),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
+
+  Consumer<HomeProvider>(
+  builder: (_, controller, __) {
+    return TableCalendar(
+      firstDay: DateTime(2020),
+      lastDay: DateTime(2030),
+      focusedDay: controller.focusedDate,
+      selectedDayPredicate: (day) =>
+          isSameDay(day, controller.tempSelectedDate),
+      onDaySelected: controller.updateTempSelectedDate,
+      calendarStyle: CalendarStyle(
+        todayDecoration: BoxDecoration(
+          color: Colors.orange,
+          shape: BoxShape.rectangle,
+        ),
+        selectedDecoration: BoxDecoration(
+          color: const Color(0xFFEB5E00),
+          shape: BoxShape.rectangle,
+        ),
+      ),
+    );
+  }),
               const SizedBox(height: 20),
               Row(
                 children: [
@@ -96,6 +101,7 @@ void showDueDatePicker(BuildContext context, HomeProvider controller) {
                   const SizedBox(width: 16),
                   InkWell(
                     onTap: () {
+                      controller.confirmSelectedDate();
                       Navigator.pop(context);
                     },
                     child: Container(
