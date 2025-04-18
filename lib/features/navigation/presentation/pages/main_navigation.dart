@@ -14,11 +14,11 @@ class MainNavigation extends StatefulWidget {
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = const [
+  final List<Widget> _pages = [
     HomePage(),
-    NotificationPage(),
-    CalendarPage(),
-    ProfilePage(),
+    const NotificationPage(),
+    const CalendarPage(),
+    const ProfilePage(),
   ];
 
   void _onItemTapped(int index) {

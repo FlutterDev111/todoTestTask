@@ -5,16 +5,17 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:todotask/core/services/firebase_auth_service.dart';
 import 'package:todotask/core/services/storage_service.dart';
 
+import '../../../../core/services/user_singlton.dart';
 import '../../data/models/user_model.dart';
 
 class AuthProvider extends ChangeNotifier {
   final FirebaseAuthService _authService;
   final StorageService _storageService;
-  
+
   // Form keys
   final loginFormKey = GlobalKey<FormState>();
   final signupFormKey = GlobalKey<FormState>();
-  
+
   // Controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -39,11 +40,16 @@ class AuthProvider extends ChangeNotifier {
       final userName = await _storageService.getString('user_name');
       final rememberMe = await _storageService.getBool('remember_me');
 
-      if (userId != null && userEmail != null && userName != null && rememberMe == true) {
+      if (userId != null &&
+          userEmail != null &&
+          userName != null &&
+          rememberMe == true) {
         _currentUser = UserModel(
           id: userId,
           email: userEmail,
-          fullName: userName, dateOfBirth: '', phoneNumber: '',
+          fullName: userName,
+          dateOfBirth: '',
+          phoneNumber: '',
         );
         _rememberMe = true;
         notifyListeners();
@@ -152,6 +158,7 @@ class AuthProvider extends ChangeNotifier {
           (route) => false,
         );
       }
+      UserSession().userId = user.id;
     } catch (e) {
       _errorMessage = e.toString();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -192,6 +199,7 @@ class AuthProvider extends ChangeNotifier {
           (route) => false,
         );
       }
+      UserSession().userId = user.id;
     } catch (e) {
       _errorMessage = e.toString();
       ScaffoldMessenger.of(context).showSnackBar(

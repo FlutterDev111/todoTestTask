@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:todotask/features/auth/presentation/providers/auth_provider.dart';
 import 'package:todotask/features/onboarding/presentation/providers/onboarding_provider.dart';
 
+import '../../../../core/services/user_singlton.dart';
+
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -19,19 +21,22 @@ class _SplashPageState extends State<SplashPage> {
 
   Future<void> _checkAuthAndNavigate() async {
     await Future.delayed(const Duration(seconds: 2));
-    
+
     if (!mounted) return;
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final onboardingProvider = Provider.of<OnboardingProvider>(context, listen: false);
-    
-    final hasCompletedOnboarding = await onboardingProvider.hasCompletedOnboarding();
+    final onboardingProvider =
+        Provider.of<OnboardingProvider>(context, listen: false);
+
+    final hasCompletedOnboarding =
+        await onboardingProvider.hasCompletedOnboarding();
     final hasloggedIn = await onboardingProvider.hasLoggedIn();
     final isLoggedIn = authProvider.currentUser != null;
 
     if (!mounted) return;
 
     if (hasloggedIn != "" && hasloggedIn != null) {
+      UserSession().userId = hasloggedIn;
       Navigator.pushReplacementNamed(context, '/main');
     } else if (!hasCompletedOnboarding) {
       Navigator.pushReplacementNamed(context, '/onboarding');
@@ -75,4 +80,4 @@ class _SplashPageState extends State<SplashPage> {
       ),
     );
   }
-} 
+}

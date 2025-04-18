@@ -17,11 +17,16 @@ class FirebaseService {
     required Map<String, dynamic> data,
     String? docId,
   }) async {
-    final ref = firestore.collection(collection);
-    if (docId != null) {
-      await ref.doc(docId).set(data);
-    } else {
-      await ref.add(data);
+    try {
+      final ref = firestore.collection(collection);
+      if (docId != null) {
+        await ref.doc(docId).set(data);
+      } else {
+        await ref.add(data);
+      }
+      print(ref.toString());
+    } catch (e) {
+      print(e.toString());
     }
   }
 
@@ -41,6 +46,20 @@ class FirebaseService {
   }) async {
     final snapshot = await firestore.collection(collection).get();
     return snapshot.docs.map((doc) => {...doc.data(), 'id': doc.id}).toList();
+  }
+
+  Stream<Map<String, dynamic>?> listenToUserById(String id, collection) {
+    return FirebaseFirestore.instance
+        .collection(collection)
+        .where(FieldPath.documentId, isEqualTo: id)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        final doc = snapshot.docs.first;
+        return {...doc.data(), 'id': doc.id};
+      }
+      return null;
+    });
   }
 
   /// Update fields of a document
