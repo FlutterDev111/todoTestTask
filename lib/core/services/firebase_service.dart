@@ -10,6 +10,55 @@ class FirebaseService {
   }
 
   static FirebaseFirestore get firestore => FirebaseFirestore.instance;
+
+  /// Create or update a document
+  static Future<void> createOrUpdate({
+    required String collection,
+    required Map<String, dynamic> data,
+    String? docId,
+  }) async {
+    final ref = firestore.collection(collection);
+    if (docId != null) {
+      await ref.doc(docId).set(data);
+    } else {
+      await ref.add(data);
+    }
+  }
+
+  /// Read a single document
+  static Future<Map<String, dynamic>?> readDocument({
+    required String collection,
+    required String docId,
+  }) async {
+    final doc = await firestore.collection(collection).doc(docId).get();
+    if (doc.exists) return {...doc.data()!, 'id': doc.id};
+    return null;
+  }
+
+  /// Read all documents in a collection
+  static Future<List<Map<String, dynamic>>> readAll({
+    required String collection,
+  }) async {
+    final snapshot = await firestore.collection(collection).get();
+    return snapshot.docs.map((doc) => {...doc.data(), 'id': doc.id}).toList();
+  }
+
+  /// Update fields of a document
+  static Future<void> updateDocument({
+    required String collection,
+    required String docId,
+    required Map<String, dynamic> data,
+  }) async {
+    await firestore.collection(collection).doc(docId).update(data);
+  }
+
+  /// Delete a document
+  static Future<void> deleteDocument({
+    required String collection,
+    required String docId,
+  }) async {
+    await firestore.collection(collection).doc(docId).delete();
+  }
 }
 
 class DefaultFirebaseOptions {
@@ -35,4 +84,4 @@ class DefaultFirebaseOptions {
     }
     throw UnsupportedError('Unsupported platform: ${defaultTargetPlatform}');
   }
-} 
+}

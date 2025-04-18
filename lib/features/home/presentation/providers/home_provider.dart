@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todotask/core/services/firebase_service.dart';
 import '../../../../core/services/firebase_auth_service.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 
@@ -150,6 +151,19 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> saveTaskToFirestore(Map<String, dynamic> todoData) async {
+      if (_selectedDate == null || selectedPriority == null) return;
+  final task = TaskModel(
+    title: titleController.text,
+    description: descriptionController.text,
+    dueDate: _selectedDate!,
+    time: _selectedTime,
+    priority: selectedPriority!,
+  );
+
+    await FirebaseService.createOrUpdate(collection: "add_todo", data: todoData);
+  }
+
   // Add more methods for home page functionality here
   // For example:
   // - Create todo
@@ -158,4 +172,4 @@ class HomeProvider extends ChangeNotifier {
   // - Get todos
   // - Filter todos
   // etc.
-} 
+}
