@@ -119,26 +119,36 @@ void showTimePickerSheet(BuildContext context, HomeProvider controller) {
                   Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF3F5F9),
-                            borderRadius: BorderRadius.circular(14),
+                        child: GestureDetector(
+                          onTap: (){
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF3F5F9),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Text("Back", style: TextStyle(color: Color(0xffEB5E00))),
                           ),
-                          alignment: Alignment.center,
-                          child: const Text("Back", style: TextStyle(color: Color(0xffEB5E00))),
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFEB5E00),
-                            borderRadius: BorderRadius.circular(14),
+                        child: GestureDetector(
+                          onTap: (){
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEB5E00),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Text("Next", style: TextStyle(color: Colors.white)),
                           ),
-                          alignment: Alignment.center,
-                          child: const Text("Next", style: TextStyle(color: Colors.white)),
                         ),
                       ),
                     ],

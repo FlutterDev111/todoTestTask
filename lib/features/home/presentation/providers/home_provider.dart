@@ -103,12 +103,11 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateTempSelectedDate(DateTime date, DateTime focus) {
-    _tempSelectedDate = date;
-    _focusedDate = focus;
+  void updateTempSelectedDate(DateTime selectedDay, DateTime focusedDay) {
+    _tempSelectedDate = selectedDay;
+    _focusedDate = focusedDay;
     notifyListeners();
   }
-
   void confirmSelectedDate() {
     _selectedDate = _tempSelectedDate;
     notifyListeners();
@@ -163,8 +162,8 @@ class HomeProvider extends ChangeNotifier {
     final task = TaskModel(
       title: titleController.text,
       description: descriptionController.text,
-      dueDate: DateTime.now(),
-      time: "01:25",
+      dueDate: _selectedDate!,
+      time: _selectedTime,
       priority: selectedPriority!,
     );
 
