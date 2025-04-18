@@ -1,88 +1,121 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:todotask/features/onboarding/presentation/controllers/onboarding_controller.dart';
-import 'package:todotask/features/onboarding/presentation/widgets/onboarding_content.dart';
+import 'package:todotask/core/constants/app_constants.dart';
+import 'package:todotask/features/onboarding/presentation/providers/onboarding_provider.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<OnboardingController>();
-    
+    final onboardingProvider = Provider.of<OnboardingProvider>(context);
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
-          PageView.builder(
-            controller: controller.pageController,
-            onPageChanged: controller.onPageChanged,
-            itemCount: controller.pages.length,
-            itemBuilder: (context, index) {
-              final page = controller.pages[index];
-              return OnboardingContent(
-                image: page.image,
-                title: page.title,
-                description: page.description,
-              );
-            },
+          PageView(
+            controller: onboardingProvider.pageController,
+            onPageChanged: onboardingProvider.onPageChanged,
+            children: [
+              _buildOnboardingPage(
+                context,
+                '🎯 Stay Organized & Focused',
+                'Easily create, manage, and prioritize your tasks to stay on top of your day.',
+                AppConstants.onboarding1,
+              ),
+              _buildOnboardingPage(
+                context,
+                '⌛ Never Miss a Deadline',
+                'Set reminders and due dates to keep track of important tasks effortlessly.',
+                AppConstants.onboarding2,
+              ),
+              _buildOnboardingPage(
+                context,
+                '✅ Boost Productivity',
+                'Break tasks into steps, track progress, and get more done with ease.',
+                AppConstants.onboarding3,
+              ),
+            ],
           ),
           Positioned(
-            left: 0,
-            right: 0,
-            bottom: 60,
+            bottom: 32,
+            left: 24,
+            right: 24,
             child: Column(
               children: [
-                Center(
-                  child: SmoothPageIndicator(
-                    controller: controller.pageController,
-                    count: controller.pages.length,
-                    effect: ExpandingDotsEffect(
-                      activeDotColor: Theme.of(context).colorScheme.primary,
-                      dotColor: Colors.grey.shade300,
-                      dotHeight: 8,
-                      dotWidth: 8,
-                      spacing: 4,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    3,
+                    (index) => AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: onboardingProvider.currentPage == index ? 24 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: onboardingProvider.currentPage == index
+                            ? const Color(0xFFD86628)
+                            : Colors.grey.shade300,
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 32),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: controller.currentPage < controller.pages.length - 1
-                            ? controller.skip
-                            : null,
-                        child: Text(
-                          'Skip',
-                          style: TextStyle(
-                            color: controller.currentPage < controller.pages.length - 1
-                                ? Colors.grey
-                                : Colors.transparent,
-                          ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                      child: Text(
+                        'Skip',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 16,
                         ),
                       ),
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Theme.of(context).colorScheme.primary,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (onboardingProvider.currentPage == 2) {
+                          Navigator.pushReplacementNamed(context, '/login');
+                        } else {
+                          onboardingProvider.nextPage();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFD86628),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 16,
                         ),
-                        child: IconButton(
-                          onPressed: controller.nextPage,
-                          icon: const Icon(
-                            Icons.arrow_forward,
-                            color: Colors.white,
-                          ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                    ],
-                  ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            onboardingProvider.currentPage == 2
+                                ? 'Get Started'
+                                : 'Next',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.arrow_forward, size: 20),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -91,4 +124,45 @@ class OnboardingPage extends StatelessWidget {
       ),
     );
   }
-} 
+
+  Widget _buildOnboardingPage(
+    BuildContext context,
+    String title,
+    String description,
+    String imagePath,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 64, 24, 24),
+      child: Column(
+        children: [
+          const SizedBox(height: 48),
+          Image.asset(
+            imagePath,
+            height: 280,
+            fit: BoxFit.contain,
+          ),
+          const SizedBox(height: 48),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1D1517),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            description,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}

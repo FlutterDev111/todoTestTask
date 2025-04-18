@@ -1,0 +1,1 @@
+/Users/apple/Desktop/todoTestTask/build/app/intermediates/cxx/Debug/385q1q3s/obj/arm64-v8a

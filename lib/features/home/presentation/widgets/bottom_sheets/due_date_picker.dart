@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../../controllers/home_controller.dart';
+import '../../providers/home_provider.dart';
 
-void showDueDatePicker(BuildContext context, HomeController controller) {
+void showDueDatePicker(BuildContext context, HomeProvider controller) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,

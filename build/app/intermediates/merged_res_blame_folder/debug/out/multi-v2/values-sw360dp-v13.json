@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.todotask.app-mergeDebugResources-47:/values-sw360dp-v13/values-sw360dp-v13.xml",
+            "outputFile": "com.example.todotask.app-mergeDebugResources-48:/values-sw360dp-v13/values-sw360dp-v13.xml",
             "map": [
                 {
-                    "source": "/Users/appletw/.gradle/caches/transforms-3/e4fed11353dad1bd521398a8f13e9b3a/transformed/preference-1.2.1/res/values-sw360dp-v13/values-sw360dp-v13.xml",
+                    "source": "/Users/apple/.gradle/caches/transforms-3/9c85ce2b2a986f9a29dc33728a011f07/transformed/preference-1.2.1/res/values-sw360dp-v13/values-sw360dp-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

@@ -38,15 +38,15 @@ class FirebaseAuthService {
       }
 
       // Update user profile
-      await userCredential.user?.updateDisplayName(fullName);
+     // await userCredential.user?.updateDisplayName(fullName);
 
       // Convert Firebase User to our UserModel
       return UserModel(
         id: userCredential.user!.uid,
         email: userCredential.user!.email!,
-        fullName: fullName,
-        phoneNumber: phoneNumber,
-        dateOfBirth: dateOfBirth,
+        fullName: "fullName",
+        phoneNumber: "phoneNumber",
+        dateOfBirth: "dateOfBirth",
       );
     } on FirebaseAuthException catch (e) {
       switch (e.code) {

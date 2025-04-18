@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/home_controller.dart';
+import '../../providers/home_provider.dart';
 
-void showTimePickerSheet(BuildContext context, HomeController controller) {
+void showTimePickerSheet(BuildContext context, HomeProvider controller) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -11,7 +11,7 @@ void showTimePickerSheet(BuildContext context, HomeController controller) {
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
     builder: (context) {
-      return Consumer<HomeController>(
+      return Consumer<HomeProvider>(
         builder: (_, controller, __) {
           final times = ['09:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM'];
 

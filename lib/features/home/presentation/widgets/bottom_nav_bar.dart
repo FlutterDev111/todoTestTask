@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../controllers/home_controller.dart';
+import '../providers/home_provider.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<HomeController>();
+    final controller = context.watch<HomeProvider>();
     
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),

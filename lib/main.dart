@@ -1,38 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:todotask/core/routes/app_routes.dart';
-import 'package:todotask/core/services/storage_service.dart';
-import 'package:todotask/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:todotask/features/auth/presentation/pages/login_page.dart';
 import 'package:todotask/features/auth/presentation/pages/signup_page.dart';
 import 'package:todotask/features/home/presentation/pages/home_page.dart';
+import 'package:todotask/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:todotask/features/auth/presentation/providers/auth_provider.dart';
+import 'package:todotask/features/onboarding/presentation/providers/onboarding_provider.dart';
+import 'package:todotask/features/home/presentation/providers/home_provider.dart';
+import 'package:todotask/core/services/storage_service.dart';
 import 'package:todotask/core/services/firebase_auth_service.dart';
 
 import 'core/services/firebase_service.dart';
+import 'features/splash/presentation/pages/splash_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   try {
-    // Initialize Firebase
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-
-    // Wait for Firebase to be ready
-    await Future.delayed(const Duration(seconds: 1));
-
-    // Initialize services
-    final storageService = await Get.putAsync(() => StorageService().init());
-    Get.put(FirebaseAuthService());
     
-    // Initialize controllers
-    Get.put(AuthController(storage: storageService));
-
     runApp(const MyApp());
   } catch (e) {
-    debugPrint('Error initializing app: $e');
     runApp(
       MaterialApp(
         home: Scaffold(
@@ -41,21 +32,12 @@ void main() async {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'Error initializing app',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  'Error initializing Firebase',
+                  style: TextStyle(fontSize: 20, color: Colors.red),
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  e.toString(),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.red),
-                ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    // Try to restart the app
-                    main();
-                  },
+                  onPressed: () => main(),
                   child: const Text('Retry'),
                 ),
               ],
@@ -72,18 +54,44 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Todo Task',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-      ),
-      initialRoute: AppRoutes.home,
-      getPages: [
-        GetPage(name: AppRoutes.login, page: () => LoginPage()),
-        GetPage(name: AppRoutes.signup, page: () => SignupPage()),
-        GetPage(name: AppRoutes.home, page: () => HomePage()),
+    return MultiProvider(
+      providers: [
+        Provider<StorageService>(
+          create: (_) => StorageService(),
+        ),
+        Provider<FirebaseAuthService>(
+          create: (_) => FirebaseAuthService(),
+        ),
+        ChangeNotifierProvider<AuthProvider>(
+          create: (context) => AuthProvider(context.read<FirebaseAuthService>()),
+        ),
+        ChangeNotifierProvider<OnboardingProvider>(
+          create: (context) => OnboardingProvider(
+            storageService: context.read<StorageService>(),
+          ),
+        ),
+        ChangeNotifierProvider<HomeProvider>(
+          create: (context) => HomeProvider(
+            authProvider: context.read<AuthProvider>(),
+            firebaseAuthService: context.read<FirebaseAuthService>(),
+          ),
+        ),
       ],
+      child: MaterialApp(
+        title: 'Todo Task',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFD86628)),
+          useMaterial3: true,
+        ),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const SplashPage(),
+          '/onboarding': (context) => const OnboardingPage(),
+          '/login': (context) => const LoginPage(),
+          '/signup': (context) => const SignupPage(),
+          '/home': (context) => const HomePage(),
+        },
+      ),
     );
   }
 }

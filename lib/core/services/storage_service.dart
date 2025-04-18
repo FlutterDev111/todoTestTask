@@ -1,53 +1,69 @@
-import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../features/auth/data/models/user_model.dart';
 
 class StorageService {
+  final _secureStorage = const FlutterSecureStorage();
   late final SharedPreferences _prefs;
 
-  // Keys
-  static const String keyUser = 'user';
-  static const String keyIsLoggedIn = 'isLoggedIn';
-  static const String keyToken = 'token';
+  StorageService() {
+    _init();
+  }
 
-  Future<StorageService> init() async {
+  Future<void> _init() async {
     _prefs = await SharedPreferences.getInstance();
-    return this;
   }
 
-  // User Methods
-  Future<bool> saveUser(UserModel user) async {
-    return await _prefs.setString(keyUser, jsonEncode(user.toJson()));
+  // Secure Storage Methods
+  Future<void> setSecureString(String key, String value) async {
+    await _secureStorage.write(key: key, value: value);
   }
 
-  UserModel? getUser() {
-    final userStr = _prefs.getString(keyUser);
-    if (userStr != null) {
-      return UserModel.fromJson(jsonDecode(userStr));
-    }
-    return null;
+  Future<String?> getSecureString(String key) async {
+    return await _secureStorage.read(key: key);
   }
 
-  // Session Methods
-  Future<bool> saveIsLoggedIn(bool isLoggedIn) async {
-    return await _prefs.setBool(keyIsLoggedIn, isLoggedIn);
+  Future<void> deleteSecureString(String key) async {
+    await _secureStorage.delete(key: key);
   }
 
-  bool isLoggedIn() {
-    return _prefs.getBool(keyIsLoggedIn) ?? false;
+  // SharedPreferences Methods
+  Future<void> setBool(String key, bool value) async {
+    await _prefs.setBool(key, value);
   }
 
-  // Token Methods
-  Future<bool> saveToken(String token) async {
-    return await _prefs.setString(keyToken, token);
+  Future<bool?> getBool(String key) async {
+    return _prefs.getBool(key);
   }
 
-  String? getToken() {
-    return _prefs.getString(keyToken);
+  Future<void> setString(String key, String value) async {
+    await _prefs.setString(key, value);
   }
 
-  // Clear all data
-  Future<bool> clearAll() async {
-    return await _prefs.clear();
+  Future<String?> getString(String key) async {
+    return _prefs.getString(key);
+  }
+
+  Future<void> setInt(String key, int value) async {
+    await _prefs.setInt(key, value);
+  }
+
+  Future<int?> getInt(String key) async {
+    return _prefs.getInt(key);
+  }
+
+  Future<void> setDouble(String key, double value) async {
+    await _prefs.setDouble(key, value);
+  }
+
+  Future<double?> getDouble(String key) async {
+    return _prefs.getDouble(key);
+  }
+
+  Future<void> remove(String key) async {
+    await _prefs.remove(key);
+  }
+
+  Future<void> clear() async {
+    await _prefs.clear();
   }
 } 

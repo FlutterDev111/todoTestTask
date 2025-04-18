@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todotask/features/home/presentation/widgets/bottom_sheets/time_picker_sheet.dart';
-import '../../controllers/home_controller.dart';
+import '../../providers/home_provider.dart';
 import '../menu/priority_menu.dart';
 import 'due_date_picker.dart';
 
@@ -13,7 +13,7 @@ class CustomTaskSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Provider.of<HomeController>(context);
+    final controller = Provider.of<HomeProvider>(context);
     return DraggableScrollableSheet(
       initialChildSize: 0.65,
       minChildSize: 0.4,

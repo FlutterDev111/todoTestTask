@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:todotask/features/home/presentation/providers/home_provider.dart';
 
-import '../../controllers/home_controller.dart';
-
-void showPriorityMenu(BuildContext context, HomeController controller) {
+void showPriorityMenu(BuildContext context, HomeProvider controller) {
   final RenderBox renderBox = controller.flagKey.currentContext!.findRenderObject() as RenderBox;
   final Offset offset = renderBox.localToGlobal(Offset.zero);
 

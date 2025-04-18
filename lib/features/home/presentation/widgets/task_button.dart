@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todotask/features/home/presentation/controllers/home_controller.dart';
+
+import '../providers/home_provider.dart';
 
 class TaskTypeButton extends StatelessWidget {
   final String? text;
@@ -9,11 +10,11 @@ class TaskTypeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selected = context.watch<HomeController>().selectedCategory == text;
+    final selected = context.watch<HomeProvider>().selectedCategory == text;
 
    return GestureDetector(
       onTap: () {
-        context.read<HomeController>().changeCategory(text??"");
+        context.read<HomeProvider>().changeCategory(text??"");
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

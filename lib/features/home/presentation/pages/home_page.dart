@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../controllers/home_controller.dart';
+import '../providers/home_provider.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/task_button.dart';
 
@@ -15,7 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    final controller = Provider.of<HomeController>(context);
+    final homeProvider = Provider.of<HomeProvider>(context);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
@@ -98,12 +97,12 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            if (controller.showAddOptions)
+            if (homeProvider.showAddOptions)
               AnimatedOpacity(
                 duration: const Duration(milliseconds: 300),
                 opacity: 0.6,
                 child: GestureDetector(
-                  onTap: () => controller.hideAddOptions(),
+                  onTap: () => homeProvider.hideAddOptions(),
                   child: Container(
                     color: Colors.white70,
                     width: double.infinity,
@@ -113,18 +112,18 @@ class _HomePageState extends State<HomePage> {
               ),
 
             // Floating menu options
-            if (controller.showAddOptions)
+            if (homeProvider.showAddOptions)
               Positioned(
                 bottom: 100,
                 right: 20,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    _buildOptionButton(context, controller, "Setup Journal"),
-                    _buildOptionButton(context, controller, "Setup Habit"),
-                    _buildOptionButton(context, controller, "Add List"),
-                    _buildOptionButton(context, controller, "Add Note"),
-                    _buildOptionButton(context, controller, "Add Todo", highlight: true),
+                    _buildOptionButton(context, homeProvider, "Setup Journal"),
+                    _buildOptionButton(context, homeProvider, "Setup Habit"),
+                    _buildOptionButton(context, homeProvider, "Add List"),
+                    _buildOptionButton(context, homeProvider, "Add Note"),
+                    _buildOptionButton(context, homeProvider, "Add Todo", highlight: true),
                     const SizedBox(height: 10),
                   ],
                 ),
@@ -133,15 +132,15 @@ class _HomePageState extends State<HomePage> {
               bottom: 60,
               right: 20,
               child: GestureDetector(
-                onTap: () => controller.toggleAddOptions(),
+                onTap: () => homeProvider.toggleAddOptions(),
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: const Color(0xFFD86628),
-                    borderRadius: BorderRadius.circular(controller.showAddOptions ? 12:28),
+                    borderRadius: BorderRadius.circular(homeProvider.showAddOptions ? 12:28),
                   ),
                   child: Icon(
-                    controller.showAddOptions ? Icons.close : Icons.add,
+                    homeProvider.showAddOptions ? Icons.close : Icons.add,
                     size: 26,
                     color: Colors.white,
                   ),
@@ -154,7 +153,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildOptionButton(BuildContext context, HomeController controller, String label, {bool highlight = false}) {
+  Widget _buildOptionButton(BuildContext context, HomeProvider provider, String label, {bool highlight = false}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       child: ElevatedButton(
@@ -172,7 +171,7 @@ class _HomePageState extends State<HomePage> {
           shadowColor: Colors.black26,
         ),
         onPressed: () {
-          controller.selectOption(context, label);
+          provider.selectOption(context, label);
         },
         child: Text(
           label,
@@ -181,6 +180,5 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
 }
 
