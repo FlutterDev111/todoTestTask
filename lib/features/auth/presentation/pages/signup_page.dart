@@ -16,7 +16,7 @@ class SignupPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Form(
-              key: authProvider.formKey,
+              key: authProvider.signupFormKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
